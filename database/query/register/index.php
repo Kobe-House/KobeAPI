@@ -1,4 +1,7 @@
 <?php
+header("Access-Control-Allow-Origin: *");
+header('Content-Type: application/json');
+
 //Show all Errors
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -6,12 +9,22 @@ error_reporting(E_ALL);
 
 //Include the Db
 include('../../migrations/2023083000000_scraping_bulk_kobe.php');
+$exec = new Connection();
 
+//f(X) to generate user guid
+function generateGuid() {
+    $data = openssl_random_pseudo_bytes(16);
+    $guid = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+    return $guid;
+  }
+ 
+//----Get Posted Data-----
 if($_SERVER["REQUEST_METHOD"] == "POST"){
 
     //Response Array
     $errors = array();
 
+    //Assign Variables
     $firstName = $_POST['firstName'];
     $lastName = $_POST['lastName'];
     $email = $_POST['email'];
@@ -19,7 +32,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     $password = $_POST['password'];
     $passwordComfirm = $_POST['passwordComfirm'];
 
-    //Validations....
+    //-----Validations-----
 
     //First Name
     if (empty($firstName)) {
@@ -58,30 +71,58 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     }
 
     //Check if passwords match
-    if ($password !== $passwordConfirm) {
+    if ($password !== $passwordComfirm) {
         $errors["password"] = "Passwords do not match.";
     }
 
-    //Encrpt Password
+    //Checking If there's no Errors
+    if(empty($errors)){
 
-	// A higher "cost" is more secure but consumes more processing power
-	$cost = 10;
-	// Create a random salt
-	$salt = strtr(base64_encode(random_bytes(16)), '+', '.');
-	$salt = sprintf("$2a$%02d$", $cost) . $salt;
+        //Encrpt Password
 
-	// Hash the password with the salt
-	$hash = crypt($password, $salt);
+        $cost = 10;
+        $salt = strtr(base64_encode(random_bytes(16)), '+', '.');
+        $salt = sprintf("$2a$%02d$", $cost) . $salt;
+        $hash = crypt($password, $salt);
 
     //Check If the Email Exists.......
 
-    //Get User's IP Address
+    //Get User's IP Address & Guid
     $userIP = $_SERVER['REMOTE_ADDR'];
+    $userGuid = generateGuid();
+    //Insert Into Db
 
-    echo json_encode($errors);
+    $registrationInsert = "INSERT INTO `users`
+                        (`username`, `password`, `email`, `access_level`, `firstname`, `lastname`, `ip`, `user_guid`, `active`, `created_at`)
+                        VALUES ('$username ', '$hash', '$email', 0, '$firstName', '$lastName', '$userIP', '$userGuid', 0, now())";
+    $queryResult = $mysqli->query($queryResult);
 
+    if(!$queryResult){
+        printf("%s\n", $mysqli->error);
+		exit();
+    }else{
+        //Send Email to Notify Registration Comfirmation
+        $fromtext = "info@kobewarehouse.com";
+        $headers = "MIME-Version: 1.0" . "\r\n";
+        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+        $headers .= "From: " .$fromtext. "\r\n";
 
+        $subject = "Registration Confirmation";
+
+        $body = "Dear ".$username.",<br><br>";
+        $body .= "This is to confirm that your account has be created successfully, <br>Find the link below to LOGIN into your account:<br>";
+        $body .= "- Link: <b>http://localhost:3000/#/logi/<br><br>";
+        $body .= "Best Regards,<br> Kobe Warehouse Canada";
+        
+        $recipient = "$email";	
+        mail($recipient,$subject,$body,$headers); 
+
+        echo ("Registration Successfully!");
+    }
+    }else{
+        //Send Errors
+        echo json_encode($errors);
+    }
+    
 }
-
-
 ?>

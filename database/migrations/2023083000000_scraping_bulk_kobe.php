@@ -1,7 +1,6 @@
  <?php
 
  // class to initiate database connection and necessary settings
-
  class Connection{
     private $db;
     private $connected = false;
@@ -23,6 +22,7 @@
             die("Database Connection Failed: ". $this->db->connect_error);
         }else{
             $this->connected = true;
+            //echo "Connected";
         }
     }
 
