@@ -9,7 +9,8 @@ error_reporting(E_ALL);
 
 //Include the Db
 include('../../migrations/2023083000000_scraping_bulk_kobe.php');
-$exec = new Connection();
+$connection = new Connection();
+$mysqli = $connection->getConnection();
 
 //f(X) to generate user guid
 function generateGuid() {

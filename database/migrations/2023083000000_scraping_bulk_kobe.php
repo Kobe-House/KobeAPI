@@ -1,5 +1,4 @@
  <?php
-
  // class to initiate database connection and necessary settings
  class Connection{
     private $db;
@@ -8,12 +7,15 @@
     //constructor to load connection at a go
     function __construct()
     {
-        $dbHost = getenv('DB_HOST');
-        $dbPort = getenv('DB_PORT');
-        $dbName = getenv('DB_DATABASE');
+        //$dbHost = getenv('DB_HOST');
+        //$dbPort = getenv('DB_PORT');
+        //$dbName = getenv('DB_DATABASE');
         //$dbUser = getenv('DB_USERNAMEE');
-        $dbUser = 'root';
         //$dbPass = getenv('DB_PASSWORD');
+        $dbHost = 'localhost';
+        $dbName = 'kojfj565fhgvgh87t8gyube';
+        $dbPort = 3306;
+        $dbUser = 'root';
         $dbPass = '';
 
         $this->db = new mysqli($dbHost, $dbUser, $dbPass, $dbName, $dbPort);
