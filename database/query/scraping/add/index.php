@@ -98,7 +98,7 @@ if($data->searchText){
     }
 
     //Error Handling
-    if(!$result || !$descriptionResult){
+    if(!$result && !$descriptionResult){
         echo json_encode(["Product Error:" => $mysqli->error]);
         exit();
     }else{

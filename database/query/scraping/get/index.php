@@ -16,7 +16,7 @@ $mysqli = $connection->getConnection();
 
 //Get the Scraped Data
 //$sql = "SELECT * FROM `product`";
-$sql = "SELECT p.product_id, p.created_at, p.title, p.image_url, pd.description_name
+$sql = "SELECT p.product_id, p.created_at, p.title, p.image_url, pd.description_name, pd.product_description_id
         FROM product p
         LEFT JOIN product_description pd
         ON p.product_id = pd.product_id
@@ -35,7 +35,11 @@ if (!$result) {
             $productId = trim($data['product_id']);
             $productTitle = trim($data['title']);
             $imageURL = stripslashes($data['image_url']);
-            $productDescription = $data['description_name'];
+            $productDescription = [
+                'productDescriptionId' => trim($data['product_description_id']),
+                'descriptionName' => $data['description_name']
+            ];
+    
 
             // Check if the product exists in the array and append the description
             $found = false;
