@@ -224,8 +224,8 @@ if($data->searchText){
     $additionalInformation = isset($dataForProductDescription['Additional Information']) ? $dataForProductDescription['Additional Information'] : array();
 
     // Check and assign values or "N/A"
-    $itemModelNumberTABLE = isset($technicalDetails['Model Number']) ? $technicalDetails['Model Number'] : (
-        isset($additionalInformation['Model Number']) ? $additionalInformation['Model Number'] : ''
+    $itemModelNumberTABLE = isset($technicalDetails['Item model number']) ? $technicalDetails['Item model number'] : (
+        isset($additionalInformation['Item model number']) ? $additionalInformation['Item model number'] : ''
     );
     $specialFeaturesTABLE = isset($technicalDetails['Special Features']) ? $technicalDetails['Special Features'] : (
         isset($additionalInformation['Special Features']) ? $additionalInformation['Special Features'] : ''
