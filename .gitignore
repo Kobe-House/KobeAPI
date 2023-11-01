@@ -2,3 +2,7 @@
 .env.local 
 
 /vendor/
+
+# Ignore index.php and test.html files
+index.php
+test.html
