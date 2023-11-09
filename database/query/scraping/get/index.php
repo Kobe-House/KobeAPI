@@ -16,10 +16,12 @@ $mysqli = $connection->getConnection();
 
 //Get the Scraped Data
 //$sql = "SELECT * FROM `product`";
-$sql = "SELECT p.product_id, p.created_at, p.title, p.image_url, p.item_model, p.parcel_dimensions, p.asin, p.manufacturer, p.item_weight, p.size, p.special_features, p.color, p.brand, pd.description_name, pd.product_description_id
+$sql = "SELECT p.product_id, p.source, pi.image_id, pi.product_image_url, pi.product_images_id, pi.product_id, p.created_at, p.title, p.image_url, p.item_model, p.parcel_dimensions, p.asin, p.manufacturer, p.item_weight, p.size, p.special_features, p.color, p.brand, pd.description_name, pd.product_description_id
         FROM product p
         LEFT JOIN product_description pd
         ON p.product_id = pd.product_id
+        LEFT JOIN product_images pi
+        ON pi.product_id = p.product_id
         ORDER BY p.created_at DESC ";
 
 $result = $mysqli->query($sql);
@@ -46,6 +48,7 @@ if (!$result) {
                 $productManufacturer = $data['manufacturer'];
             }
             $productBrand = $data['brand'];
+            $productSource = $data['source'];
             $productWeight = $data['item_weight'];
             $productDimension = $data['parcel_dimensions'];
             $productModalNumber = $data['item_model'];
@@ -54,10 +57,26 @@ if (!$result) {
             $productSize = $data['size'];
             $imageURL = stripslashes($data['image_url']);
 
+            //Product Description
+            if (isset($data['product_description_id']) && !empty($data['product_description_id'])) {
+                $productDescriptionId = trim($data['product_description_id']);
+            } else {
+                $productDescriptionId = -1;
+            }
             $productDescription = [
-                'productDescriptionId' => trim($data['product_description_id']),
+                'productDescriptionId' => $productDescriptionId,
                 'descriptionName' => $data['description_name']
             ];
+
+            //Product Alternative Images
+            // if (isset($data['product_image_url']) && !empty($data['product_image_url'])) {
+            //     $productDescriptionId = trim($data['product_image_url']);
+            // } else {
+            //     $productDescriptionId = -1;
+            // }
+            // $productAlternativeImg = [
+
+            // ];
     
 
             // Check if the product exists in the array and append the description
@@ -74,6 +93,7 @@ if (!$result) {
                 $newProduct = [
                     'productId' => $productId,
                     'productTitle' => $productTitle,
+                    'source' => $productSource,
                     'productAsin' => $productAsin,
                     'productManufacturer' => $productManufacturer,
                     'productBrand' => $productBrand,

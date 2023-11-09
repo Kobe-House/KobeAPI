@@ -13,20 +13,38 @@ include('../../../migrations/2023083000000_scraping_bulk_kobe.php');
 $connection = new Connection();
 $mysqli = $connection->getConnection();
 
+// $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../../');
+// $dotenv->load();
+// $api = getenv('API_KEY');
+require '../../../../vendor/autoload.php';
+$apiKey = '99f9a6f251cf4da6ab39fcb004ea08c9';
 
 //Get JSON 
 $json = file_get_contents('php://input', true);
 $data = json_decode($json);
 
-//Gettinng Composer autoload
-require '../../../../vendor/autoload.php';
+ //Getting the URL
+ $scrapingURL = $data->searchText;
 
+ //Implementing Guzzle
+ $client = new GuzzleHttp\Client();
 
-// $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../../');
-// $dotenv->load();
-// $api = getenv('API_KEY');
+ $response = $client->request('POST', 'https://api.zyte.com/v1/extract', [
+ 'auth' => [$apiKey, ''],
+ 'headers' => ['Accept-Encoding' => 'gzip'],
+ 'json' => [
+     'url' => $scrapingURL,  
+     'httpResponseBody' => true 
+     ],
+ ]);
 
- $apiKey = '99f9a6f251cf4da6ab39fcb004ea08c9';
+ $dataAPI = json_decode($response->getBody());
+ $http_response_body = base64_decode($dataAPI->httpResponseBody);
+
+ //Parsing Using DOMDocument
+ $dom = new DOMDocument();
+ @$dom->loadHTML($http_response_body);
+ $xpath = new DOMXPath($dom);
 
  //UL Variables
     $dateFirstAvailableUL = '';
@@ -55,31 +73,11 @@ require '../../../../vendor/autoload.php';
     $specialFeaturesFinal = '';
     $itemModelNumberFinal = '';
 
+//Get Scraping Source
+$source = $data->source;
+
 //SCRAPING PROCESS
-if($data->searchText){
-
-    //Getting the URL
-    $scrapingURL = $data->searchText;
-
-    //Implementing Guzzle
-    $client = new GuzzleHttp\Client();
-
-    $response = $client->request('POST', 'https://api.zyte.com/v1/extract', [
-    'auth' => [$apiKey, ''],
-    'headers' => ['Accept-Encoding' => 'gzip'],
-    'json' => [
-        'url' => $scrapingURL,  
-        'httpResponseBody' => true 
-        ],
-    ]);
-
-    $data = json_decode($response->getBody());
-    $http_response_body = base64_decode($data->httpResponseBody);
-
-    //Parsing Using DOMDocument
-    $dom = new DOMDocument();
-    @$dom->loadHTML($http_response_body);
-    $xpath = new DOMXPath($dom);
+if($source == 'amazon'){
 
     // Scenario 1: Check if product details are in a list (ul structure)
     $elements = $xpath->query('//div[@id="detailBullets_feature_div"]//li//span[@class="a-list-item"]');
@@ -401,12 +399,12 @@ if($data->searchText){
     $colorFinal = $mysqli->real_escape_string($colorFinal);
 
     //INSERT INTO THE DTABASE
-    $sql = "INSERT INTO `product` (`title`, `image_url`, `url`, `created_at`, `item_model`, `parcel_dimensions`, `asin`, `manufacturer`, `item_weight`, `size`, `special_features`, `color`, `brand`) 
-            VALUES ('$productTitle', '$imageURL', '$scrapingURL', now(), '$itemModelNumberFinal', '$itemDimensionFinal', '$asinFinal', '$manufacturerFinal', '$itemWeightFinal', '$sizeFinal', '$specialFeaturesFinal', '$colorFinal', '$brandFinal')";
+    $sql = "INSERT INTO `product` (`title`, `image_url`, `url`, `created_at`, `item_model`, `parcel_dimensions`, `asin`, `manufacturer`, `item_weight`, `size`, `special_features`, `color`, `brand`, `source`) 
+            VALUES ('$productTitle', '$imageURL', '$scrapingURL', now(), '$itemModelNumberFinal', '$itemDimensionFinal', '$asinFinal', '$manufacturerFinal', '$itemWeightFinal', '$sizeFinal', '$specialFeaturesFinal', '$colorFinal', '$brandFinal', '$source')";
     $result = $mysqli->query($sql);
 
     $productId = $mysqli->insert_id;
-    var_dump($productId);
+    //var_dump($productId);
 
     //ADD PRODCUT DESCRIPTION
     foreach($descriptions as $productDescription){
@@ -423,4 +421,79 @@ if($data->searchText){
     }else{
         echo json_encode(["Result:" => "The Insert Query Done!"]);
     }
-}
+    }else{
+        echo json_encode(["Scraping Source" => "Not Amazon!"]);
+    }
+
+
+    //WALMART
+    if($source == 'walmart'){
+
+        //Extracting Product Title
+        $titleElement = $xpath->query('//h1[@id="main-title"]');
+        if ($titleElement->length > 0) {
+            // Get the text content of the product title element
+            $productTitleWalmart = $titleElement->item(0)->textContent;
+        }
+        //Extracting the Main Image
+        $imageElements = $xpath->query('//div[@data-testid="hero-image-container"]//img[@class="db"]');
+
+        // Check if we found the image element
+        if ($imageElements->length > 0) {
+            $nonCleanedImage = $imageElements->item(0)->attributes->getNamedItem('src')->nodeValue;
+
+            $parsedURL = parse_url($nonCleanedImage);
+            $imageURLWalmart = $parsedURL['scheme'] . '://' . $parsedURL['host'] . $parsedURL['path'];
+        }
+
+        //INSERT QUERY WALMART
+        $sql = "INSERT INTO `product` (`title`, `image_url`, `source`) 
+            VALUES ('$productTitleWalmart', '$imageURLWalmart', '$source')";
+        // $sql = "INSERT INTO `product` (`title`, `image_url`, `url`, `created_at`, `item_model`, `parcel_dimensions`, `asin`, `manufacturer`, `item_weight`, `size`, `special_features`, `color`, `brand`, `source`) 
+        //     VALUES ('$productTitle', '$imageURL', '$scrapingURL', now(), '$itemModelNumberFinal', '$itemDimensionFinal', '$asinFinal', '$manufacturerFinal', '$itemWeightFinal', '$sizeFinal', '$specialFeaturesFinal', '$colorFinal', '$brandFinal', '$source')";
+        $result = $mysqli->query($sql);
+        $productIdWalmart = $mysqli->insert_id;
+
+        //Selecting Other Multiple Alternative Images
+        $carouselContainer = $xpath->query('//div[@data-testid="vertical-carousel-container"]');
+
+        if ($carouselContainer->length > 0) {
+            // Within the carousel container, find all the image buttons
+            $imageButtons = $xpath->query('.//button[@data-testid="item-page-vertical-carousel-hero-image-button"]', $carouselContainer->item(0));
+
+            // Initialize an array to store the image URLs
+            $alternateImageURLs = [];
+
+            // Loop through each image button and extract the image URL
+            foreach ($imageButtons as $button) {
+                $imageElement = $xpath->query('.//img', $button);
+
+                if ($imageElement->length > 0) {
+                    $nonCleanedImageAlt = $imageElement->item(0)->attributes->getNamedItem('src')->nodeValue;
+
+                    $parsedURL = parse_url($nonCleanedImageAlt);
+                    $imageURLAlt = $parsedURL['scheme'] . '://' . $parsedURL['host'] . $parsedURL['path'];
+                    $alternateImageURLs[] = $imageURLAlt;
+                }
+            }
+
+            // Use the array of alternate image URLs as needed
+            foreach ($alternateImageURLs as $index => $url) {
+                
+                $insertAltImagesWalmart = "INSERT INTO `product_images` 
+                (`product_id`, `image_id`, `image_url`) 
+                VALUES('$productIdWalmart', '$index', '$url')";
+
+                $resultWalmart = $mysqli->query($insertAltImagesWalmart);
+            }
+        }
+
+        
+    }else{
+        echo json_encode(["Scraping Source" => "Not Walmart!"]);
+    }
+    if($source == 'bestbuy'){
+        echo json_encode(["Scraping Source" => "BestBuy!"]);
+    }else{
+        echo json_encode(["Scraping Source" => "Not BestBuy!"]);
+    }
