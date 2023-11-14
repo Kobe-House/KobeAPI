@@ -1,3 +1,4 @@
+
 <?php
 
 // Reporting All Errors 
@@ -10,102 +11,143 @@ ini_set('display_errors', '1');
 
 require 'vendor/autoload.php';
 
-//including namespaces
-// use GuzzleHttp\Client;
-// use GuzzleHttp\Cookie\CookieJar;
-// use Symfony\Component\DomCrawler\Crawler;
-// use Sunra\PhpSimple\HtmlDomParser;
+    use Sunra\PhpSimple\HtmlDomParser;
+    use BrowshotAPI\Client;
+    use Symfony\Component\DomCrawler\Crawler;
 
-// Adding User-Agents Headers, Handling Cookies
-// $userAgents = ['Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.0.0 Safari/537.36'];
-// $userAgent = $userAgents[array_rand($userAgents)];
-// $cookieJar =  new CookieJar();
-
-// //Create class objects & Adding Headers
-// $client = new Client([
-//     'headers' => ['User-Agent' => $userAgent], 
-//     'cookies' => $cookieJar
-// ]);
-
-// //Adding Delays 2 to 5 Seconds
-// $delays =  rand(2, 5);
-// sleep($delays);
-
-// //---807 Empire----
-// $endPoint = "https://807empire.ca/product/the-lighthouse-hoodie-regular/";
-
-// $response = $client->request('GET', $endPoint);
-// $html = $response->getBody()->getContents();
-
-// $html1 = <<<'HTML'
-// <!DOCTYPE html>
-// <html>
-//     <body>
-//         <div>
-//             <a href='https://google.com'>anchor1</a>
-//             <div class='inner'>
-//                 <a href='https://youtube.com'>anchor2</a>
-//             </div>
-//         </div>
-//     </body>
-// </html>
-// HTML;
-// //Creating crawler object
-// $crawler = new Crawler($html1);
-
-// $crawler->filterXPath('//body//*')
-// ->reduce(function (Crawler $node, $i){
-//     return $node->nodeName() === 'div';
-// })
-// ->each(function (Crawler $node, $i){
-//     if($node->nodeName() ==='div')
-//     echo "Node: $i \n";
-//     echo "Tag: ", $node->nodeName(), "\n";
-//     echo "Outer HTML: ", $node->outerHtml(), "\n";
-
-// });
-
-// // Add delay 1, 5 Sec
-// sleep(rand(1,5));
-$apiKey = '99f9a6f251cf4da6ab39fcb004ea08c9';
-$linkToScrape = 'https://www.bestbuy.ca/en-ca/product/freedom-mobile-apple-iphone-13-128gb-pink-monthly-tab-payment/15726921?icmp=wi_tspd_offer_iphone_priority_6';
-$client = new GuzzleHttp\Client();
-$response = $client->request('POST', 'https://api.zyte.com/v1/extract', [
-    'auth' => [$apiKey, ''],
-    'headers' => ['Accept-Encoding' => 'gzip'],
-    'json' => [
-        'url' => $linkToScrape,
-        'httpResponseBody' => true
-    ],
-]);
-$data = json_decode($response->getBody());
-$http_response_body = base64_decode($data->httpResponseBody);
+    $apiKey = '99f9a6f251cf4da6ab39fcb004ea08c9';
+    $linkToScrape = 'https://www.bestbuy.ca/en-ca/product/plusone-dual-vibrating-massager-pink/16681093';
+    $client = new GuzzleHttp\Client();
+    $response = $client->request('POST', 'https://api.zyte.com/v1/extract', [
+        'auth' => [$apiKey, ''],
+        'headers' => ['Accept-Encoding' => 'gzip'],
+        'json' => [
+            'url' => $linkToScrape,
+            'httpResponseBody' => true
+        ],
+    ]);
+    
+    $data = json_decode($response->getBody());
+    $http_response_body = base64_decode($data->httpResponseBody);
+    
+// Browshot API key
+$browshotApiKey = 'L0ACiKaXAdyDmx7QSzhlEHhz';
 //Parsing Using DOMDocument
 $dom = new DOMDocument();
-// Load the HTML Content
 @$dom->loadHTML($http_response_body);
 $xpath = new DOMXPath($dom);
 
+
 //================BEST BUY===================================
+//Single Image Url BEST BUT
+    // XPath query to get the main image URL
+    // $mainImageURL = $xpath->evaluate("string(//div[@data-automation='media-gallery-product-image-slider']//img[@class='productImage_1NbKv']/@src)");
+
+    // // XPath query to get additional image URLs
+    // $additionalImageURLs = [];
+    // $thumbnailItems = $xpath->query("//div[@data-automation='media-gallery-product-image-slider']//div[@class='thumbnailItemContainer_CWxw7']//img[@class='productImage_1NbKv']/@src");
+    
+    // foreach ($thumbnailItems as $thumbnailItem) {
+    //     $additionalImageURLs[] = $thumbnailItem->nodeValue;
+    // }
+    
+    // Output the results
+    // echo "<br>Main Image URL: " . $mainImageURL . PHP_EOL;
+    // echo "<br>Additional Image URLs: " . implode(", ", $additionalImageURLs) . PHP_EOL;
+    
 // Extract the product title
-$productTitle = $xpath->query("//h1[@class='productName_2KoPa']")[0]->textContent;
+// $productTitle = $xpath->query("//h1[@class='productName_2KoPa']")[0]->textContent;
 
 // Extract the brand
-$brandLink = $xpath->query("//div[@class='modelInformation__LaWR']//a[@class='link_3hcyN brand-link']")[0];
-$brandName = trim($brandLink->textContent);
+// $brandLink = $xpath->query("//div[@class='modelInformation__LaWR']//a[@class='link_3hcyN brand-link']")[0];
+// $brandName = trim($brandLink->textContent);
 
 // Extract the model number
-$modelNumber = $xpath->query("//div[@data-automation='MODEL_NUMBER_ID']//span")[0]->textContent;
+//$modelNumber = $xpath->query("//div[@data-automation='MODEL_NUMBER_ID']//span")[0]->textContent;
 
 // Extract the web code
-$webCode = $xpath->query("//div[@data-automation='SKU_ID']//span")[0]->textContent;
+// $webCode = $xpath->query("//div[@data-automation='SKU_ID']//span")[0]->textContent;
+
 
 // Print the extracted information
-echo "Product Title: " . $productTitle . "\n";
-echo "Brand: " . $brandName . "\n";
-echo "Model Number: " . $modelNumber . "\n";
-echo "Web Code: " . $webCode . "\n";
+// echo "Product Title: " . $productTitle . "\n";
+// echo "Brand: " . $brandName . "\n";
+// echo "Model Number: " . $modelNumber . "\n";
+// echo "Web Code: " . $webCode . "\n";
 
+//Description
+// Extract the product description
+// $productDescription = $xpath->query('//div[@class="productDescription_2WBlx"]/ul/li');
+
+// if ($productDescription->length > 0) {
+//     echo "<br>Product Description:\n";
+//     foreach ($productDescription as $descriptionItem) {
+//         echo "- " . $descriptionItem->textContent . "<br>";
+//     }
+// } else {
+//     echo "Product description not found.\n";
+// }
+
+//Product Specifications
+// Find the container with product specifications
+// $specContainer = $xpath->query('//div[@data-testid="specifications"]')->item(0);
+
+// if ($specContainer) {
+//     $specifications = [];
+
+    // Iterate through the specification groups
+    // $groups = $xpath->query('.//div[@class="itemContainer_uqm6b"]', $specContainer);
+    // foreach ($groups as $group) {
+    //     $groupName = trim($xpath->query('.//div[@class="itemName_GaNqp"]', $group)->item(0)->textContent);
+    //     $groupValue = trim($xpath->query('.//div[@class="itemValue_3FLTX"]', $group)->item(0)->textContent);
+
+    //     $specifications[$groupName] = $groupValue;
+    // }
+
+    // Now you have the product specifications in the $specifications array
+    // You can access individual specifications like this:
+    // $productCondition = $specifications['Display'];
+    // $depth = $specifications['Dimensions (in)'];
+    // $whatsInTheBox = $specifications['Other Input or Output Ports'];
+    // $color = $specifications['Colour'];
+    // $length = $specifications['Dimensions (in)'];
+    // $weight = $specifications['Weight (lbs)'];
+    // $batteryPowerSource = $specifications['Battery Type'];
+    // $formFactor = $specifications['Backlit Keyboard'];
+    // $collection = $specifications['Warranty'];
+    // $bodyColor = $specifications['Colour'];
+    // $dimensionIn = $specifications['Dimensions (in)'];
+
+    // You can print or use the extracted values as needed
+    // echo "Product Condition: $productCondition\n";
+    // echo "Depth: $depth\n";
+    // echo "What's in the Box: $whatsInTheBox\n";
+    // echo "<br>Color: $color\n";
+    // echo "<br>Length: $length\n";
+    // echo "<br>Weight: $weight\n";
+    // echo "Battery/Power Source: $batteryPowerSource\n";
+    // echo "Form Factor: $formFactor\n";
+    // echo "Collection: $collection\n";
+    // echo "Body Color: $bodyColor\n";
+    // echo "Dimension (in): $dimensionIn\n";
+//}
+// XPath query to select all image elements within the slider
+//$imageXPathQuery = '//div[@class="thumbnailItemContainer_CWxw7"]/div/div/div[@class="displayingImage_3xp0y"]/img';
+
+// Use XPath to query for image elements
+// $imageNodes = $xpath->query($imageXPathQuery);
+
+// Initialize an array to store image URLs
+// $imageUrls = [];
+
+// Loop through each image node and extract the 'src' attribute
+// foreach ($imageNodes as $imageNode) {
+//     $imageUrl = $imageNode->getAttribute('src');
+//     $imageUrls[] = $imageUrl;
+// }
+
+// Now $imageUrls array contains the URLs of all additional images
+// print_r($imageUrls);
 //=========================BEST BUY=================================
 
 //==========================WALMART start===========================

@@ -16,13 +16,18 @@ $mysqli = $connection->getConnection();
 
 //Get the Scraped Data
 //$sql = "SELECT * FROM `product`";
-$sql = "SELECT p.product_id, p.source, pi.image_id, pi.product_image_url, pi.product_images_id, pi.product_id, p.created_at, p.title, p.image_url, p.item_model, p.parcel_dimensions, p.asin, p.manufacturer, p.item_weight, p.size, p.special_features, p.color, p.brand, pd.description_name, pd.product_description_id
+$sql = "SELECT p.product_id, p.source, p.created_at, p.title, p.image_url, p.item_model, p.parcel_dimensions, p.asin, p.manufacturer, p.item_weight, p.size, p.special_features, p.color, p.brand, pd.description_name, pd.product_description_id
         FROM product p
         LEFT JOIN product_description pd
         ON p.product_id = pd.product_id
-        LEFT JOIN product_images pi
-        ON pi.product_id = p.product_id
         ORDER BY p.created_at DESC ";
+// $sql = "SELECT p.product_id, p.source, pi.image_id, pi.product_image_url, pi.product_images_id, pi.product_id, p.created_at, p.title, p.image_url, p.item_model, p.parcel_dimensions, p.asin, p.manufacturer, p.item_weight, p.size, p.special_features, p.color, p.brand, pd.description_name, pd.product_description_id
+//         FROM product p
+//         LEFT JOIN product_description pd
+//         ON p.product_id = pd.product_id
+//         LEFT JOIN product_images pi
+//         ON pi.product_id = p.product_id
+//         ORDER BY p.created_at DESC ";
 
 $result = $mysqli->query($sql);
 
@@ -31,11 +36,18 @@ if (!$result) {
 } else {
     // Initialize an array to hold fetched data
     $products = [];
-
+    //Definine the product ID
+    //$productId = null;
     if ($result->num_rows > 0) {
         while ($data = $result->fetch_assoc()) {
-            $productId = trim($data['product_id']);
-            $productTitle = trim($data['title']);
+
+                $productId = $data['product_id'];
+             
+            if (isset($data['title']) && !empty($data['title'])) {
+                $productTitle = trim($data['title']);
+            } 
+            // $productId = trim($data['product_id']);
+            // $productTitle = trim($data['title']);
             if ($data['asin'] !== null) {
                 $productAsin = str_replace("\xE2\x80\x8E", "", $data['asin']);
             } else {
@@ -48,7 +60,7 @@ if (!$result) {
                 $productManufacturer = $data['manufacturer'];
             }
             $productBrand = $data['brand'];
-            $productSource = $data['source'];
+            $productSource = strtoupper($data['source']);
             $productWeight = $data['item_weight'];
             $productDimension = $data['parcel_dimensions'];
             $productModalNumber = $data['item_model'];
