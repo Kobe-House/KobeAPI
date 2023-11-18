@@ -12,6 +12,8 @@
         "vlucas/phpdotenv": "^5.5",
         "slim/slim": "^2.6",
         "symfony/css-selector": "^6.3",
-        "browshot-php/browshot": "dev-master"
+        "browshot-php/browshot": "dev-master",
+        "voku/simple_html_dom": "^4.8",
+        "php-webdriver/webdriver": "^1.15"
     }
 }

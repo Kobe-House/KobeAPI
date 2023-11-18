@@ -17,7 +17,7 @@ $mysqli = $connection->getConnection();
 // $dotenv->load();
 // $api = getenv('API_KEY');
 require '../../../../vendor/autoload.php';
-$apiKey = '99f9a6f251cf4da6ab39fcb004ea08c9';
+$apiKey = 'b182690c808e4464a4cb354704ffe391';
 
 //Get JSON 
 $json = file_get_contents('php://input', true);
@@ -46,7 +46,7 @@ $data = json_decode($json);
  @$dom->loadHTML($http_response_body);
  $xpath = new DOMXPath($dom);
 
-    //UL Variables
+    //UL Variables Amazon
     $dateFirstAvailableUL = '';
     $placeOfBusinessUL = '';
     $asinUL = '';
@@ -60,7 +60,7 @@ $data = json_decode($json);
     $brandUL = '';
     $specialFeaturesUL = '';
 
-    //Variable Declaration For Final Data to Insert into the Database
+    //Variable Declaration For Final Data to Insert into the Database Amazon
     $asinFinal = '';
     $manufacturerFinal = '';
     $brandFinal = '';
@@ -73,8 +73,8 @@ $data = json_decode($json);
     $specialFeaturesFinal = '';
     $itemModelNumberFinal = '';
 
-//Get Scraping Source
-$source = $data->source;
+    //Get Scraping Source
+    $source = $data->source;
 
 //SCRAPING PROCESS
 if($source == 'amazon'){
@@ -134,7 +134,7 @@ if($source == 'amazon'){
     }
 
     
-    // Extract the Description 1st structure
+    //Extract the Description 1st structure
     $featureBullets = $dom->getElementById('feature-bullets');
     $descriptions = array(); 
 
@@ -178,8 +178,11 @@ if($source == 'amazon'){
     // Define the attributes you want to extract
     $attributes = array(
         'Manufacturer',
+        'Manufacturer reference',
         'Item model number',
+        'Model Number',
         'Parcel Dimensions',
+        'Product Dimensions',
         'ASIN',
         'Fabric Type',
         'Place of Business',
@@ -222,8 +225,11 @@ if($source == 'amazon'){
     $additionalInformation = isset($dataForProductDescription['Additional Information']) ? $dataForProductDescription['Additional Information'] : array();
 
     // Check and assign values or "N/A"
-    $itemModelNumberTABLE = isset($technicalDetails['Item model number']) ? $technicalDetails['Item model number'] : (
+    $itemModelNumberTABLE1 = isset($technicalDetails['Item model number']) ? $technicalDetails['Item model number'] : (
         isset($additionalInformation['Item model number']) ? $additionalInformation['Item model number'] : ''
+    );
+    $itemModelNumberTABLE2 = isset($technicalDetails['Model Number']) ? $technicalDetails['Model Number'] : (
+        isset($additionalInformation['Model Number']) ? $additionalInformation['Model Number'] : ''
     );
     $specialFeaturesTABLE = isset($technicalDetails['Special Features']) ? $technicalDetails['Special Features'] : (
         isset($additionalInformation['Special Features']) ? $additionalInformation['Special Features'] : ''
@@ -231,8 +237,11 @@ if($source == 'amazon'){
     $brandTABLE = isset($technicalDetails['Brand']) ? $technicalDetails['Brand'] : (
         isset($additionalInformation['Brand']) ? $additionalInformation['Brand'] :''
     );
-    $itemDimensionsTABLE = isset($technicalDetails['Parcel Dimensions']) ? $technicalDetails['Parcel Dimensions'] : (
+    $itemDimensionsTABLE1 = isset($technicalDetails['Parcel Dimensions']) ? $technicalDetails['Parcel Dimensions'] : (
         isset($additionalInformation['Parcel Dimensions']) ? $additionalInformation['Parcel Dimensions'] : ''
+    );
+    $itemDimensionsTABLE2 = isset($technicalDetails['Product Dimensions']) ? $technicalDetails['Product Dimensions'] : (
+        isset($additionalInformation['Product Dimensions']) ? $additionalInformation['Product Dimensions'] : ''
     );
 
     $asinTABLE = isset($technicalDetails['ASIN']) ? $technicalDetails['ASIN'] : (
@@ -242,14 +251,17 @@ if($source == 'amazon'){
     $dateFirstAvailableTABLE = isset($technicalDetails['Date First Available']) ? $technicalDetails['Date First Available'] : (
         isset($additionalInformation['Date First Available']) ? $additionalInformation['Date First Available'] : ''
     );
-    $manufacturerTABLE = isset($technicalDetails['Manufacturer']) ? $technicalDetails['Manufacturer'] : (
+    $manufacturerTABLE1 = isset($technicalDetails['Manufacturer']) ? $technicalDetails['Manufacturer'] : (
         isset($additionalInformation['Manufacturer']) ? $additionalInformation['Manufacturer'] : ''
+    );
+    $manufacturerTABLE2 = isset($technicalDetails['Manufacturer reference']) ? $technicalDetails['Manufacturer reference'] : (
+        isset($additionalInformation['Manufacturer reference']) ? $additionalInformation['Manufacturer reference'] : ''
     );
     $itemWeightTABLE = isset($technicalDetails['Item Weight']) ? $technicalDetails['Item Weight'] : (
         isset($additionalInformation['Item Weight']) ? $additionalInformation['Item Weight'] :  ''
     );
-    $sizeTABLE = isset($technicalDetails['size']) ? $technicalDetails['size'] : (
-        isset($additionalInformation['size']) ? $additionalInformation['size'] :  ''
+    $sizeTABLE = isset($technicalDetails['Size']) ? $technicalDetails['Size'] : (
+        isset($additionalInformation['Size']) ? $additionalInformation['Size'] :  ''
     );
     $colorTABLE = isset($technicalDetails['Colour']) ? $technicalDetails['Colour'] : (
         isset($additionalInformation['Colour']) ? $additionalInformation['Colour'] :  ''
@@ -288,8 +300,10 @@ if($source == 'amazon'){
     }
 
     //Final Manufacturer
-    if (!empty($manufacturerTABLE)) {
-        $manufacturerFinal = $manufacturerTABLE;
+    if (!empty($manufacturerTABLE1)) {
+        $manufacturerFinal = $manufacturerTABLE1;
+    } elseif (!empty($manufacturerTABLE2)) {
+        $manufacturerFinal = $manufacturerTABLE2;
     } elseif (!empty($manufacturerUL)) {
         $manufacturerFinal = $manufacturerUL;
     }
@@ -323,10 +337,12 @@ if($source == 'amazon'){
     }
 
     //Final Item Dimension
-    if (!empty($itemDimensionsTABLE)) {
-        $itemDimensionFinal = $itemDimensionUL;
+    if (!empty($itemDimensionsTABLE1)) {
+        $itemDimensionFinal = $itemDimensionsTABLE1;
+    } elseif (!empty($itemDimensionsTABLE2)) {
+        $itemDimensionFinal = $itemDimensionsTABLE2;
     } elseif (!empty($itemDimensionUL)) {
-        $itemDimensionFinal = $itemWeightUL;
+        $itemDimensionFinal = $itemDimensionUL;
     }
 
     //If No Item Dimension
@@ -335,8 +351,10 @@ if($source == 'amazon'){
     }
 
     //Final Item Model NUmber
-    if (!empty($itemModelNumberTABLE)) {
-        $itemModelNumberFinal = $itemModelNumberTABLE;
+    if (!empty($itemModelNumberTABLE1)) {
+        $itemModelNumberFinal = $itemModelNumberTABLE1;
+    } elseif (!empty($itemModelNumberTABLE2)) {
+        $itemModelNumberFinal = $itemModelNumberTABLE2;
     } elseif (!empty($itemModelNumberUL)) {
         $itemModelNumberFinal = $itemModelNumberUL;
     }
@@ -421,9 +439,10 @@ if($source == 'amazon'){
     }else{
         echo json_encode(["Result:" => "The Insert Query Done!"]);
     }
-    }else{
+ }
+ else{
         echo json_encode(["Scraping Source" => "Not Amazon!"]);
-    }
+}
 
 
     //WALMART
