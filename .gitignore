@@ -6,3 +6,4 @@
 # Ignore index.php and test.html files
 index.php
 test.html
+/database/query/dynamics/index.php

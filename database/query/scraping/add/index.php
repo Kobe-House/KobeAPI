@@ -16,8 +16,14 @@ $mysqli = $connection->getConnection();
 // $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../../');
 // $dotenv->load();
 // $api = getenv('API_KEY');
+
+//===Dynamics loading contents script====
 require '../../../../vendor/autoload.php';
-$apiKey = 'b182690c808e4464a4cb354704ffe391';
+include '../../dynamics/amazon-script.php';
+include '../../dynamics/bestbuy-script.php';
+include '../../dynamics/walmart-script.php';
+
+$apiKey = 'c921f878e6ef4b2fa791379703fd43db';
 
 //Get JSON 
 $json = file_get_contents('php://input', true);
@@ -53,8 +59,10 @@ $data = json_decode($json);
     $departmentUL = '';
     $manufacturerUL = '';
     $itemWeightUL = '';
-    $itemDimensionUL = '';
-    $itemModelNumberUL = '';
+    $itemDimensionUL1 = '';
+    $itemDimensionUL2 = '';
+    $itemModelNumberUL1 = '';
+    $itemModelNumberUL2 = '';
     $sizeUL = '';
     $colorUL = '';
     $brandUL = '';
@@ -76,7 +84,10 @@ $data = json_decode($json);
     //Get Scraping Source
     $source = $data->source;
 
-//SCRAPING PROCESS
+/* -------------------------------------------------------------------------- */
+/*                                   Amazon                                   */
+/* -------------------------------------------------------------------------- */
+
 if($source == 'amazon'){
 
     // Scenario 1: Check if product details are in a list (ul structure)
@@ -104,9 +115,13 @@ if($source == 'amazon'){
             } elseif (strpos($label, 'Brand') !== false) {
                 $brandUL = $value;
             } elseif (strpos($label, 'Parcel Dimensions') !== false) {
-                $itemDimensionUL = $value;
+                $itemDimensionUL1 = $value;
+            } elseif (strpos($label, 'Product Dimensions') !== false) {
+                $itemDimensionUL2 = $value;
             } elseif (strpos($label, 'Model Number') !== false) {
-                $itemModelNumberUL = $value;
+                $itemModelNumberUL1 = $value;
+            } elseif (strpos($label, 'Item model number') !== false) {
+                $itemModelNumberUL2 = $value;
             } elseif (strpos($label, 'Special Features') !== false) {
                 $specialFeaturesUL = $value;
             } elseif (strpos($label, 'Manufacturer') !== false) {
@@ -341,8 +356,10 @@ if($source == 'amazon'){
         $itemDimensionFinal = $itemDimensionsTABLE1;
     } elseif (!empty($itemDimensionsTABLE2)) {
         $itemDimensionFinal = $itemDimensionsTABLE2;
-    } elseif (!empty($itemDimensionUL)) {
-        $itemDimensionFinal = $itemDimensionUL;
+    } elseif (!empty($itemDimensionUL1)) {
+        $itemDimensionFinal = $itemDimensionUL1;
+    } elseif (!empty($itemDimensionUL2)) {
+        $itemDimensionFinal = $itemDimensionUL2;
     }
 
     //If No Item Dimension
@@ -355,8 +372,10 @@ if($source == 'amazon'){
         $itemModelNumberFinal = $itemModelNumberTABLE1;
     } elseif (!empty($itemModelNumberTABLE2)) {
         $itemModelNumberFinal = $itemModelNumberTABLE2;
-    } elseif (!empty($itemModelNumberUL)) {
-        $itemModelNumberFinal = $itemModelNumberUL;
+    } elseif (!empty($itemModelNumberUL1)) {
+        $itemModelNumberFinal = $itemModelNumberUL1;
+    } elseif (!empty($itemModelNumberUL2)) {
+        $itemModelNumberFinal = $itemModelNumberUL2;
     }
 
     //If No Item Model NUmber
@@ -421,17 +440,55 @@ if($source == 'amazon'){
             VALUES ('$productTitle', '$imageURL', '$scrapingURL', now(), '$itemModelNumberFinal', '$itemDimensionFinal', '$asinFinal', '$manufacturerFinal', '$itemWeightFinal', '$sizeFinal', '$specialFeaturesFinal', '$colorFinal', '$brandFinal', '$source')";
     $result = $mysqli->query($sql);
 
-    $productId = $mysqli->insert_id;
+    $productIdAmazon = $mysqli->insert_id;
     //var_dump($productId);
 
     //ADD PRODCUT DESCRIPTION
     foreach($descriptions as $productDescription){
         $productDescription = trim($mysqli->real_escape_string($productDescription));
         $descriptionInsertSql = "INSERT INTO `product_description` (`product_id`, `description_name`)
-                                 VALUES ($productId, '$productDescription')";
+                                 VALUES ($productIdAmazon, '$productDescription')";
         $descriptionResult = $mysqli->query($descriptionInsertSql);
     }
 
+    //Additional Images
+
+    //Horizontal Additional Images
+    $horAdditionaImages= scrapeAmazon($scrapingURL, $apiKey);
+
+    //Vertical Additional Images
+    $vertAdditionaImages = [];
+    $nodes = $xpath->query("//span[@class='a-button-text']//img/@src");
+    foreach ($nodes as $node) {
+        $vertAdditionaImages[] = $node->value;
+    }
+
+    if(!empty($horAdditionaImages)){
+        foreach ($horAdditionaImages as $index => $url) {
+                
+        $insertAltImagesWalmart = "INSERT INTO `product_images` 
+        (`product_id`, `image_id`, `product_image_url`) 
+        VALUES('$productIdAmazon', '$index', '$url')";
+
+        $altImgResultAmazon = $mysqli->query($insertAltImagesWalmart);
+    }
+    }else{
+        echo json_encode("No Horizantal Images");
+    }
+
+    if(!empty($vertAdditionaImages)){
+        foreach ($vertAdditionaImages as $index => $url) {
+                
+        $insertAltImagesWalmart = "INSERT INTO `product_images` 
+        (`product_id`, `image_id`, `product_image_url`) 
+        VALUES('$productIdAmazon', '$index', '$url')";
+
+        $altImgResultAmazon = $mysqli->query($insertAltImagesWalmart);
+    }
+    }else{
+        echo json_encode("No Horizantal Images");
+    }
+    
     //Error Handling
     if(!$result && !$descriptionResult){
         echo json_encode(["Product Error:" => $mysqli->error]);
@@ -444,8 +501,10 @@ if($source == 'amazon'){
         echo json_encode(["Scraping Source" => "Not Amazon!"]);
 }
 
+/* -------------------------------------------------------------------------- */
+/*                                   Walmart                                  */
+/* -------------------------------------------------------------------------- */
 
-    //WALMART
     if($source == 'walmart'){
 
         //Extracting Product Title
@@ -465,13 +524,55 @@ if($source == 'amazon'){
             $imageURLWalmart = $parsedURL['scheme'] . '://' . $parsedURL['host'] . $parsedURL['path'];
         }
 
+        //Calling function to return other product info and decsription
+
+        $walmartProduct = scrapeWalmart($scrapingURL, $apiKey);
+
+        // Extract information from scrappedData
+        $size = $walmartProduct['scrappedData']['size'];
+        $colour = $walmartProduct['scrappedData']['colour'];
+        $sku = $walmartProduct['scrappedData']['sku'];
+        $upc = $walmartProduct['scrappedData']['upc'];
+
+        $walmartDescription = $walmartProduct['walmartDescription'][0];
+
+        //Cleaning the description
+        $descriptions = []; 
+        foreach ($walmartDescription as $description) {
+            $description = str_replace('<div class="dangerous-html mb3">', '', $description);
+
+            $description = str_replace('</div>', '', $description);
+
+            $descriptions[] = trim($description);
+        }
+
+        // Print the individual descriptions
+        print_r($descriptions);
+
         //INSERT QUERY WALMART
         $sql = "INSERT INTO `product` (`title`, `image_url`, `source`) 
             VALUES ('$productTitleWalmart', '$imageURLWalmart', '$source')";
-        // $sql = "INSERT INTO `product` (`title`, `image_url`, `url`, `created_at`, `item_model`, `parcel_dimensions`, `asin`, `manufacturer`, `item_weight`, `size`, `special_features`, `color`, `brand`, `source`) 
-        //     VALUES ('$productTitle', '$imageURL', '$scrapingURL', now(), '$itemModelNumberFinal', '$itemDimensionFinal', '$asinFinal', '$manufacturerFinal', '$itemWeightFinal', '$sizeFinal', '$specialFeaturesFinal', '$colorFinal', '$brandFinal', '$source')";
+             $sql = "INSERT INTO 
+             `product` (`title`, `image_url`, `created_at`, `item_model`, `asin`, `color`, `source`, `size`, `url`) 
+             VALUES ('$productTitleWalmart', '$imageURLWalmart', now(), '$upc', '$sku', '$colour', '$source', '$size', '$scrapingURL')";
+            
         $result = $mysqli->query($sql);
         $productIdWalmart = $mysqli->insert_id;
+
+        //Adding the descriptions
+
+        foreach ($descriptions as $descriptionItem) {
+
+            // Extract text content from the DOMElement
+            $descriptionText = trim($descriptionItem);
+
+            // Use real_escape_string on the extracted string
+            $descriptionItemEscaped = $mysqli->real_escape_string($descriptionText);
+
+            $descriptionInsertSql = "INSERT INTO `product_description` (`product_id`, `description_name`)
+                                    VALUES ($productIdWalmart, '$descriptionItemEscaped')";
+            $descriptionResult = $mysqli->query($descriptionInsertSql);
+        }
 
         //Selecting Other Multiple Alternative Images
         $carouselContainer = $xpath->query('//div[@data-testid="vertical-carousel-container"]');
@@ -500,7 +601,7 @@ if($source == 'amazon'){
             foreach ($alternateImageURLs as $index => $url) {
                 
                 $insertAltImagesWalmart = "INSERT INTO `product_images` 
-                (`product_id`, `image_id`, `image_url`) 
+                (`product_id`, `image_id`, `product_image_url`) 
                 VALUES('$productIdWalmart', '$index', '$url')";
 
                 $resultWalmart = $mysqli->query($insertAltImagesWalmart);
@@ -508,9 +609,16 @@ if($source == 'amazon'){
         }
 
         
+
+        
     }else{
         echo json_encode(["Scraping Source" => "Not Walmart!"]);
     }
+
+/* -------------------------------------------------------------------------- */
+/*                                   Bestbuy                                  */
+/* -------------------------------------------------------------------------- */
+
     if($source == 'bestbuy'){
 
         // Extract the product title
@@ -611,8 +719,8 @@ if($source == 'amazon'){
 
         //INSERT INTO THE DTABASE BEST BUY
         $sql = "INSERT INTO 
-        `product` (`title`, `image_url`, `created_at`, `item_model`, `parcel_dimensions`, `asin`, `item_weight`, `color`, `brand`, `source`, `item_height`) 
-        VALUES ('$productTitleBestBuy', '$mainImageURL', now(), '$modelNumberBestBuy', '$dimensioBestBuyFinal', '$webCodeBestBuy', '$weightBestBuyFinal', '$colorBestBuy', '$brandNameBestBuy', '$source', '$heightBestBuyFinal')";
+        `product` (`title`, `image_url`, `created_at`, `item_model`, `parcel_dimensions`, `asin`, `item_weight`, `color`, `brand`, `source`, `item_height`, `url`) 
+        VALUES ('$productTitleBestBuy', '$mainImageURL', now(), '$modelNumberBestBuy', '$dimensioBestBuyFinal', '$webCodeBestBuy', '$weightBestBuyFinal', '$colorBestBuy', '$brandNameBestBuy', '$source', '$heightBestBuyFinal', '$scrapingURL')";
         // $sql = "INSERT INTO 
         // `product` (`title`, `image_url`, `url`, `created_at`, `item_model`, `parcel_dimensions`, `asin`, `manufacturer`, `item_weight`, `size`, `special_features`, `color`, `brand`, `source`) 
         // VALUES ('$productTitleBestBuy', '$imageURL', '$scrapingURL', now(), '$modelNumberBestBuy', '$dimensioBestBuy', '$webCodeBestBuy', '$manufacturerFinal', '$weightBestBuy', '$sizeFinal', '$specialFeaturesFinal', '$colorBestBuy', '$brandNameBestBuy', '$source')";
