@@ -23,7 +23,7 @@ include '../../dynamics/amazon-script.php';
 include '../../dynamics/bestbuy-script.php';
 include '../../dynamics/walmart-script.php';
 
-$apiKey = 'c921f878e6ef4b2fa791379703fd43db';
+$apiKey = '76c01917efb5461fb2f23e6ab7551885';
 
 //Get JSON 
 $json = file_get_contents('php://input', true);
@@ -716,7 +716,6 @@ if($source == 'amazon'){
         // Get the main image URL
         $mainImageURL = $xpath->evaluate("string(//div[@data-automation='media-gallery-product-image-slider']//img[@class='productImage_1NbKv']/@src)");
 
-
         //INSERT INTO THE DTABASE BEST BUY
         $sql = "INSERT INTO 
         `product` (`title`, `image_url`, `created_at`, `item_model`, `parcel_dimensions`, `asin`, `item_weight`, `color`, `brand`, `source`, `item_height`, `url`) 
@@ -726,7 +725,7 @@ if($source == 'amazon'){
         // VALUES ('$productTitleBestBuy', '$imageURL', '$scrapingURL', now(), '$modelNumberBestBuy', '$dimensioBestBuy', '$webCodeBestBuy', '$manufacturerFinal', '$weightBestBuy', '$sizeFinal', '$specialFeaturesFinal', '$colorBestBuy', '$brandNameBestBuy', '$source')";
         $result = $mysqli->query($sql);
 
-        $productId = $mysqli->insert_id;
+        $productIdBestBuy = $mysqli->insert_id;
 
         // Extract the product description
         $productDescription = $xpath->query('//div[@class="productDescription_2WBlx"]/ul/li');
@@ -741,12 +740,31 @@ if($source == 'amazon'){
                 $descriptionItemEscaped = $mysqli->real_escape_string($descriptionText);
 
                 $descriptionInsertSql = "INSERT INTO `product_description` (`product_id`, `description_name`)
-                                        VALUES ($productId, '$descriptionItemEscaped')";
+                                        VALUES ($productIdBestBuy, '$descriptionItemEscaped')";
                 $descriptionResult = $mysqli->query($descriptionInsertSql);
             }
         } else {
             echo "Product description not found.\n";
         }
+
+        // Adding Additional Images
+        $bestbuyAdditionalImages = scrapeBestbuy($scrapingURL, $apiKey);
+
+        var_dump($bestbuyAdditionalImages);
+
+        if(!empty($bestbuyAdditionalImages)){
+            foreach ($bestbuyAdditionalImages as $index => $url) {
+                    
+            $insertAltImagesBestBuy = "INSERT INTO `product_images` 
+            (`product_id`, `image_id`, `product_image_url`) 
+            VALUES('$productIdBestBuy', '$index', '$url')";
+    
+            $altImgResultBestBuy = $mysqli->query($insertAltImagesBestBuy);
+        }
+        }else{
+            echo json_encode("No Additional Images");
+        }
+
 
 
     }else{
