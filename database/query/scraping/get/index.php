@@ -22,7 +22,11 @@ $sql = "SELECT p.product_id, p.source, p.created_at, p.title, p.image_url, p.ite
         FROM product p
         LEFT JOIN product_description pd ON p.product_id = pd.product_id
         LEFT JOIN product_images pi ON p.product_id = pi.product_id
-        ORDER BY p.product_id, pd.product_description_id, pi.product_images_id";
+        ORDER BY 
+        p.created_at DESC,
+        p.product_id DESC,
+        pd.product_description_id DESC,
+        pi.product_images_id DESC";
 
 $result = $mysqli->query($sql);
 
