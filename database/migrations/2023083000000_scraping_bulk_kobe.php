@@ -13,11 +13,11 @@
             //$dbName = getenv('DB_DATABASE');
             //$dbUser = getenv('DB_USERNAMEE');
             //$dbPass = getenv('DB_PASSWORD');
-            $dbHost = 'localhost';
+            $dbHost = '62.72.26.181';
             $dbName = 'kojfj565fhgvgh87t8gyube';
             $dbPort = 3306;
-            $dbUser = 'root';
-            $dbPass = '';
+            $dbUser = 'kobe';
+            $dbPass = 'Kobe@Warehouse2023!#';
 
             $this->db = new mysqli($dbHost, $dbUser, $dbPass, $dbName, $dbPort);
 
