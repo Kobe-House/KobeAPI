@@ -467,8 +467,8 @@ if($source == 'amazon'){
         foreach ($horAdditionaImages as $index => $url) {
                 
         $insertAltImagesWalmart = "INSERT INTO `product_images` 
-        (`product_id`, `image_id`, `product_image_url`) 
-        VALUES('$productIdAmazon', '$index', '$url')";
+        (`product_id`, `product_image_url`) 
+        VALUES('$productIdAmazon', '$url')";
 
         $altImgResultAmazon = $mysqli->query($insertAltImagesWalmart);
     }
@@ -480,8 +480,8 @@ if($source == 'amazon'){
         foreach ($vertAdditionaImages as $index => $url) {
                 
         $insertAltImagesWalmart = "INSERT INTO `product_images` 
-        (`product_id`, `image_id`, `product_image_url`) 
-        VALUES('$productIdAmazon', '$index', '$url')";
+        (`product_id`, `product_image_url`) 
+        VALUES('$productIdAmazon', '$url')";
 
         $altImgResultAmazon = $mysqli->query($insertAltImagesWalmart);
     }
@@ -601,8 +601,8 @@ if($source == 'amazon'){
             foreach ($alternateImageURLs as $index => $url) {
                 
                 $insertAltImagesWalmart = "INSERT INTO `product_images` 
-                (`product_id`, `image_id`, `product_image_url`) 
-                VALUES('$productIdWalmart', '$index', '$url')";
+                (`product_id`, `product_image_url`) 
+                VALUES('$productIdWalmart', '$url')";
 
                 $resultWalmart = $mysqli->query($insertAltImagesWalmart);
             }
@@ -756,8 +756,8 @@ if($source == 'amazon'){
             foreach ($bestbuyAdditionalImages as $index => $url) {
                     
             $insertAltImagesBestBuy = "INSERT INTO `product_images` 
-            (`product_id`, `image_id`, `product_image_url`) 
-            VALUES('$productIdBestBuy', '$index', '$url')";
+            (`product_id`, `product_image_url`) 
+            VALUES('$productIdBestBuy', '$url')";
     
             $altImgResultBestBuy = $mysqli->query($insertAltImagesBestBuy);
         }
