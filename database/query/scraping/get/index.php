@@ -8,7 +8,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
 //Setting Headers for Cross Origin Resource Sharing
-header("Access-Control-Allow-Origin: http://sellerzone.io:80");
+header("Access-Control-Allow-Origin: http://sellerzone.io");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Origin, Content-Type, Accept");
 
