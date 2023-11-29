@@ -1,4 +1,3 @@
-
 <?php
 
 include "database/query/dynamics/amazon-script.php";
@@ -11,16 +10,14 @@ $apiKey = "76c01917efb5461fb2f23e6ab7551885";
 
 // // $linkToScrape = "https://www.bestbuy.ca/en-ca/product/bebelelo-set-of-6-baby-nursery-bundle-92-graco-modes-jogger-2-0-travel-system-stroller-with-car-seat-crib-bed/16000510";
 
-$linkToScrape = "https://www.bestbuy.ca/en-ca/product/microsoft-surface-laptop-go-3-12-45-touchscreen-laptop-sandstone-intel-i5-1235u-256gb-ssd-8gb-ram-exclusive-retail-partner/17212075";
+// $linkToScrape = "https://www.bestbuy.ca/en-ca/product/microsoft-surface-laptop-go-3-12-45-touchscreen-laptop-sandstone-intel-i5-1235u-256gb-ssd-8gb-ram-exclusive-retail-partner/17212075";
 
-$bestbuyProduct = scrapeBestbuy($linkToScrape, $apiKey);
+// $bestbuyProduct = scrapeBestbuy($linkToScrape, $apiKey);
 
-echo '<pre>';
-print_r($bestbuyProduct);
-echo '</pre>';
-die();
-
-
+// echo '<pre>';
+// print_r($bestbuyProduct);
+// echo '</pre>';
+// die();
 
 /* -------------------------------------------------------------------------- */
 /*                                   Walmart                                  */
@@ -58,8 +55,73 @@ die();
 // print_r($amazonProduct);
 // echo '</pre>';
 // die();
+require 'vendor/autoload.php';
 
-?>
+$apiKey = '76c01917efb5461fb2f23e6ab7551885';
+$scrapingURL = 'https://www.amazon.com/Oculus-Virtual-Reality-Headset-Cable-Gaming/dp/B081SHD773/ref=rvi_sccl_3/133-1349499-0948946?pd_rd_w=QdMVo&content-id=amzn1.sym.f5690a4d-f2bb-45d9-9d1b-736fee412437&pf_rd_p=f5690a4d-f2bb-45d9-9d1b-736fee412437&pf_rd_r=JZDTYEAXSTFGVNXTF3VV&pd_rd_wg=3oqyE&pd_rd_r=9810cbde-caac-44c5-8f38-005367ad34a6&pd_rd_i=B081SHD773&psc=1';
+
+$client = new GuzzleHttp\Client();
+
+$response = $client->request('POST', 'https://api.zyte.com/v1/extract', [
+    'auth' => [$apiKey, ''],
+    'headers' => ['Accept-Encoding' => 'gzip'],
+    'json' => [
+        'url' => $scrapingURL,
+        'httpResponseBody' => true
+    ],
+]);
+
+$dataAPI = json_decode($response->getBody());
+$http_response_body = base64_decode($dataAPI->httpResponseBody);
+
+//Parsing Using DOMDocument
+$dom = new DOMDocument();
+@$dom->loadHTML($http_response_body);
+$xpath = new DOMXPath($dom);
 
 
+// Define the attributes you want to scrape
+$attributes = array(
+    'Manufacturer',
+    'Item model number',
+    'Product Dimensions',
+    'ASIN',
+    'Item Weight',
+);
 
+// XPath query for the product details table
+$productDetailsXPath = "//div[@id='prodDetails']//table[contains(@class, 'prodDetTable')]//tr";
+
+// Find the product details table
+$productDetails = $xpath->query($productDetailsXPath);
+
+// Initialize an array to store scraped data
+$dataForProductDescription = array();
+
+// Loop through the rows in the product details table
+foreach ($productDetails as $row) {
+    // Extract the header and data cells
+    $header = trim($xpath->query(".//th[contains(@class, 'prodDetSectionEntry')]", $row)->item(0)->textContent);
+    $dataCell = trim($xpath->query(".//td[contains(@class, 'prodDetAttrValue')]", $row)->item(0)->textContent);
+
+    // Check if the header is in the list of attributes to scrape
+    if (in_array($header, $attributes)) {
+        $dataForProductDescription[$header] = $dataCell;
+    }
+}
+
+// Now $dataForProductDescription should contain the scraped data for the specified attributes
+var_dump($dataForProductDescription);
+
+$manufacturer = $dataForProductDescription['Manufacturer'] ?? '';
+$itemModelNumber = $dataForProductDescription['Item model number'] ?? '';
+$productDimensions = $dataForProductDescription['Product Dimensions'] ?? '';
+$asin = $dataForProductDescription['ASIN'] ?? '';
+$itemWeight = $dataForProductDescription['Item Weight'] ?? '';
+
+// Now you can use these variables as needed
+echo "Manufacturer: $manufacturer\n";
+echo "Item Model Number: $itemModelNumber\n";
+echo "Product Dimensions: $productDimensions\n";
+echo "ASIN: $asin\n";
+echo "Item Weight: $itemWeight\n";
