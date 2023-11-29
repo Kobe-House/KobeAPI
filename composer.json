@@ -1,19 +1,22 @@
 {
-    "name": "nick/kobe-api",
-    "authors": [
-        {
-            "name": "Tom"
-        }
-    ],
-    "require": {
-        "guzzlehttp/guzzle": "^7.8",
-        "symfony/dom-crawler": "^6.3",
-        "sunra/php-simple-html-dom-parser": "^1.5",
-        "vlucas/phpdotenv": "^5.5",
-        "slim/slim": "^2.6",
-        "symfony/css-selector": "^6.3",
-        "browshot-php/browshot": "dev-master",
-        "voku/simple_html_dom": "^4.8",
-        "php-webdriver/webdriver": "^1.15"
+  "name": "nick/kobe-api",
+  "authors": [
+    {
+      "name": "Tom"
     }
+  ],
+  "require": {
+    "guzzlehttp/guzzle": "^7.8",
+    "symfony/dom-crawler": "^6.3",
+    "sunra/php-simple-html-dom-parser": "^1.5",
+    "vlucas/phpdotenv": "^5.5",
+    "slim/slim": "^2.6",
+    "symfony/css-selector": "^6.3",
+    "browshot-php/browshot": "dev-master",
+    "voku/simple_html_dom": "^4.8",
+    "php-webdriver/webdriver": "^1.15"
+  },
+  "config": {
+    "platform-check": false
+  }
 }
