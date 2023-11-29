@@ -1,0 +1,23 @@
+{
+    "name": "browshot-php/browshot",
+    "type": "library",
+    "description": "PHP library for Browshot API: take screenshots of any web page",
+    "autoload": {
+        "psr-0": {"Browshot": "src/"}
+    },
+    "license": "MIT",
+    "homepage": "https://github.com/juliensobrier/browshot-php",
+    "authors": [
+        {
+            "name": "Julien Sobrier",
+            "email": "julien@sobrier.net",
+            "homepage": "https://browshot.com/",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.1.6"
+    },
+    "minimum-stability": "dev",
+		"prefer-stable": true
+}
