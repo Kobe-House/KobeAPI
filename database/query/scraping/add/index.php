@@ -94,58 +94,58 @@ if ($source == 'amazon') {
     //------- Scenario 0: Check if product details are in a single table like structure ----------
 
     // Define the attributes to scrape
-    $attributesSingleTableLikeStructure = [
-        'Manufacturer',
-        'Manufacturer reference',
-        'Item model number',
-        'Model Number',
-        'Parcel Dimensions',
-        'Product Dimensions',
-        'ASIN',
-        'Fabric Type',
-        'Place of Business',
-        'Care Instructions',
-        'Batteries Required',
-        'Date First Available',
-        'Item Weight',
-        'Included components',
-        'Maximum Recommended Load',
-        'Size',
-        'Colour',
-        'Brand',
-        'Special Features',
-    ];
+    // $attributesSingleTableLikeStructure = [
+    //     'Manufacturer',
+    //     'Manufacturer reference',
+    //     'Item model number',
+    //     'Model Number',
+    //     'Parcel Dimensions',
+    //     'Product Dimensions',
+    //     'ASIN',
+    //     'Fabric Type',
+    //     'Place of Business',
+    //     'Care Instructions',
+    //     'Batteries Required',
+    //     'Date First Available',
+    //     'Item Weight',
+    //     'Included components',
+    //     'Maximum Recommended Load',
+    //     'Size',
+    //     'Colour',
+    //     'Brand',
+    //     'Special Features',
+    // ];
 
-    // Loop through the sections and attributes
-    foreach ($attributesSingleTableLikeStructure as $attribute) {
-        // Find the rows containing the attribute
-        $rows = $xpath->query("//th[contains(text(), '$attribute')]/ancestor::tr");
+    // // Loop through the sections and attributes
+    // foreach ($attributesSingleTableLikeStructure as $attribute) {
+    //     // Find the rows containing the attribute
+    //     $rows = $xpath->query("//th[contains(text(), '$attribute')]/ancestor::tr");
 
-        foreach ($rows as $row) {
-            // Extract the data cell value
-            $dataCell = trim($xpath->query(".//td", $row)->item(0)->textContent);
+    //     foreach ($rows as $row) {
+    //         // Extract the data cell value
+    //         $dataCell = trim($xpath->query(".//td", $row)->item(0)->textContent);
 
-            // Check if the data cell value is not empty
-            if (!empty($dataCell)) {
-                // Store the data in an array (you can use a more appropriate data structure if needed)
-                $dataForSingleTableProductDescription[$attribute] = $dataCell;
-            }
-        }
-    }
+    //         // Check if the data cell value is not empty
+    //         if (!empty($dataCell)) {
+    //             // Store the data in an array (you can use a more appropriate data structure if needed)
+    //             $dataForSingleTableProductDescription[$attribute] = $dataCell;
+    //         }
+    //     }
+    // }
 
 
-    $singleTableASIN = $dataForSingleTableProductDescription['ASIN'];
-    $singleTableManufacturer1 = $dataForSingleTableProductDescription['Manufacturer'];
-    $singleTableManufacturer2 = $dataForSingleTableProductDescription['Manufacturer reference'];
-    $singleTableDimension1 = $dataForSingleTableProductDescription['Product Dimensions'];
-    $singleTableDimension2 = $dataForSingleTableProductDescription['Parcel Dimensions'];
-    $singleTableModel1 = $dataForSingleTableProductDescription['Item model number'];
-    $singleTableModel2 = $dataForSingleTableProductDescription['Model Number'];
-    $singleTableWeight = $dataForSingleTableProductDescription['Item Weight'];
-    $singleTableSpecialFeatures = $dataForSingleTableProductDescription['Special Features'];
-    $singleTableSize = $dataForSingleTableProductDescription['Size'];
-    $singleTableColor = $dataForSingleTableProductDescription['Colour'];
-    $singleTableColor = $dataForSingleTableProductDescription['Item Weight'];
+    // $singleTableASIN = $dataForSingleTableProductDescription['ASIN'];
+    // $singleTableManufacturer1 = $dataForSingleTableProductDescription['Manufacturer'];
+    // $singleTableManufacturer2 = $dataForSingleTableProductDescription['Manufacturer reference'];
+    // $singleTableDimension1 = $dataForSingleTableProductDescription['Product Dimensions'];
+    // $singleTableDimension2 = $dataForSingleTableProductDescription['Parcel Dimensions'];
+    // $singleTableModel1 = $dataForSingleTableProductDescription['Item model number'];
+    // $singleTableModel2 = $dataForSingleTableProductDescription['Model Number'];
+    // $singleTableWeight = $dataForSingleTableProductDescription['Item Weight'];
+    // $singleTableSpecialFeatures = $dataForSingleTableProductDescription['Special Features'];
+    // $singleTableSize = $dataForSingleTableProductDescription['Size'];
+    // $singleTableColor = $dataForSingleTableProductDescription['Colour'];
+    // $singleTableColor = $dataForSingleTableProductDescription['Item Weight'];
 
     //------- Scenario 1: Check if product details are in a list (ul structure) ----------
     $elements = $xpath->query('//div[@id="detailBullets_feature_div"]//li//span[@class="a-list-item"]');
@@ -364,9 +364,10 @@ if ($source == 'amazon') {
         $asinFinal = $asinTABLE;
     } elseif (!empty($asinUL)) {
         $asinFinal = $asinUL;
-    } elseif (!empty($singleTableASIN)) {
-        $asinFinal = $singleTableASIN;
     }
+    //  elseif (!empty($singleTableASIN)) {
+    //     $asinFinal = $singleTableASIN;
+    // }
 
     //If No ASIN
     if (empty($asinFinal)) {
@@ -380,11 +381,12 @@ if ($source == 'amazon') {
         $manufacturerFinal = $manufacturerTABLE2;
     } elseif (!empty($manufacturerUL)) {
         $manufacturerFinal = $manufacturerUL;
-    } elseif (!empty($singleTableManufacturer1)) {
-        $manufacturerFinal = $singleTableManufacturer1;
-    } elseif (!empty($singleTableManufacturer2)) {
-        $manufacturerFinal = $singleTableManufacturer2;
     }
+    //  elseif (!empty($singleTableManufacturer1)) {
+    //     $manufacturerFinal = $singleTableManufacturer1;
+    // } elseif (!empty($singleTableManufacturer2)) {
+    //     $manufacturerFinal = $singleTableManufacturer2;
+    // }
 
     //If No Manufacturer
     if (empty($manufacturerFinal)) {
@@ -407,9 +409,10 @@ if ($source == 'amazon') {
         $itemWeightFinal = $itemWeightTABLE;
     } elseif (!empty($brandBelowTitle)) {
         $itemWeightFinal = $itemWeightUL;
-    } elseif (!empty($singleTableWeight)) {
-        $itemWeightFinal = $singleTableWeight;
     }
+    //  elseif (!empty($singleTableWeight)) {
+    //     $itemWeightFinal = $singleTableWeight;
+    // }
 
     //If No Item Weight
     if (empty($itemWeightFinal)) {
@@ -425,11 +428,12 @@ if ($source == 'amazon') {
         $itemDimensionFinal = $itemDimensionUL1;
     } elseif (!empty($itemDimensionUL2)) {
         $itemDimensionFinal = $itemDimensionUL2;
-    } elseif (!empty($singleTableDimension1)) {
-        $itemDimensionFinal = $singleTableDimension1;
-    } elseif (!empty($singleTableDimension2)) {
-        $itemDimensionFinal = $singleTableDimension2;
     }
+    // elseif (!empty($singleTableDimension1)) {
+    //     $itemDimensionFinal = $singleTableDimension1;
+    // } elseif (!empty($singleTableDimension2)) {
+    //     $itemDimensionFinal = $singleTableDimension2;
+    // }
 
     //If No Item Dimension
     if (empty($itemDimensionFinal)) {
@@ -445,11 +449,12 @@ if ($source == 'amazon') {
         $itemModelNumberFinal = $itemModelNumberUL1;
     } elseif (!empty($itemModelNumberUL2)) {
         $itemModelNumberFinal = $itemModelNumberUL2;
-    } elseif (!empty($singleTableModel1)) {
-        $itemModelNumberFinal = $singleTableModel1;
-    } elseif (!empty($singleTableModel2)) {
-        $itemModelNumberFinal = $singleTableModel2;
     }
+    // elseif (!empty($singleTableModel1)) {
+    //     $itemModelNumberFinal = $singleTableModel1;
+    // } elseif (!empty($singleTableModel2)) {
+    //     $itemModelNumberFinal = $singleTableModel2;
+    // }
 
     //If No Item Model NUmber
     if (empty($itemModelNumberFinal)) {
@@ -463,9 +468,10 @@ if ($source == 'amazon') {
         $specialFeaturesFinal = $specialFeaturesUL;
     } elseif (!empty($specialFeatureBelowTitle)) {
         $specialFeaturesFinal = $specialFeatureBelowTitle;
-    } elseif (!empty($singleTableSpecialFeatures)) {
-        $specialFeaturesFinal = $singleTableSpecialFeatures;
     }
+    // elseif (!empty($singleTableSpecialFeatures)) {
+    //     $specialFeaturesFinal = $singleTableSpecialFeatures;
+    // }
 
     //If No Item Special Features
     if (empty($specialFeaturesFinal)) {
@@ -479,9 +485,10 @@ if ($source == 'amazon') {
         $colorFinal = $colorUL;
     } elseif (!empty($colorBelowTitle)) {
         $colorFinal = $colorBelowTitle;
-    } elseif (!empty($singleTableColor)) {
-        $colorFinal = $singleTableColor;
     }
+    // elseif (!empty($singleTableColor)) {
+    //     $colorFinal = $singleTableColor;
+    // }
 
     //If No Item Color
     if (empty($colorFinal)) {
@@ -493,9 +500,10 @@ if ($source == 'amazon') {
         $sizeFinal = $sizeTABLE;
     } elseif (!empty($sizeUL)) {
         $sizeFinal = $sizeUL;
-    } elseif (!empty($singleTableSize)) {
-        $sizeFinal = $singleTableSize;
     }
+    // elseif (!empty($singleTableSize)) {
+    //     $sizeFinal = $singleTableSize;
+    // }
 
     //If No Item Size
     if (empty($sizeFinal)) {
