@@ -655,21 +655,78 @@ if ($source == 'bestbuy') {
 
             $specifications[$groupName] = $groupValue;
         }
-        // Assigning each spefication to the array
-        $productCondition = $specifications['Product Condition'];
-        $colorBestBuy = $specifications['Colour'];
-        $weightBestBuy0 = $specifications['Weight'];
-        $weightBestBuy1 = $specifications['Weight (lbs)'];
-        $weightBestBuy2 = $specifications['Weight (in)'];
-        $weightBestBuy3 = $specifications['Weight (Inches)'];
-        $heightBestBuy0 = $specifications['Height'];
-        $heightBestBuy1 = $specifications['Height (in)'];
-        $heightBestBuy2 = $specifications['Height (Inches)'];
-        $heightBestBuy3 = $specifications['Height (lbs)'];
-        $dimensioBestBuy0 = $specifications['Dimensions'];
-        $dimensioBestBuy1 = $specifications['Dimensions (in)'];
-        $dimensioBestBuy2 = $specifications['Dimensions (Inches)'];
-        $dimensioBestBuy3 = $specifications['Dimensions (lbs)'];
+
+        if (isset($specifications['Colour'])) {
+            $colorBestBuy = $specifications['Colour'];
+        } else {
+            $colorBestBuy = 'N/A';
+        }
+        if (isset($specifications['Product Condition'])) {
+            $productCondition = $specifications['Product Condition'];
+        } else {
+            $productCondition = 'N/A';
+        }
+        if (isset($specifications['Weight'])) {
+            $weightBestBuy0 = $specifications['Weight'];
+        } else {
+            $weightBestBuy0 = 'N/A';
+        }
+        if (isset($specifications['Weight (lbs)'])) {
+            $weightBestBuy2 = $specifications['Weight (lbs)'];
+        } else {
+            $weightBestBuy2 = 'N/A';
+        }
+        if (isset($specifications['Weight (in)'])) {
+            $weightBestBuy3 = $specifications['Weight (in)'];
+        } else {
+            $weightBestBuy3 = 'N/A';
+        }
+        if (isset($specifications['Weight (Inches)'])) {
+            $weightBestBuy1 = $specifications['Weight (Inches)'];
+        } else {
+            $weightBestBuy1 = 'N/A';
+        }
+        if (isset($specifications['Height (lbs)'])) {
+            $heightBestBuy0 = $specifications['Height (lbs)'];
+        } else {
+            $heightBestBuy0 = 'N/A';
+        }
+        if (isset($specifications['Height (in)'])) {
+            $heightBestBuy1 = $specifications['Height (in)'];
+        } else {
+            $heightBestBuy1 = 'N/A';
+        }
+        if (isset($specifications['Height (Inches)'])) {
+            $heightBestBuy2 = $specifications['Height (Inches)'];
+        } else {
+            $heightBestBuy2 = 'N/A';
+        }
+        if (isset($specifications['Height'])) {
+            $heightBestBuy3 = $specifications['Height'];
+        } else {
+            $heightBestBuy3 = 'N/A';
+        }
+        if (isset($specifications['Dimensions'])) {
+            $dimensioBestBuy0 = $specifications['Dimensions'];
+        } else {
+            $dimensioBestBuy0 = 'N/A';
+        }
+        if (isset($specifications['Dimensions (in)'])) {
+            $dimensioBestBuy1 = $specifications['Dimensions (in)'];
+        } else {
+            $dimensioBestBuy1 = 'N/A';
+        }
+        if (isset($specifications['Dimensions (Inches)'])) {
+            $dimensioBestBuy2 = $specifications['Dimensions (Inches)'];
+        } else {
+            $dimensioBestBuy2 = 'N/A';
+        }
+        if (isset($specifications['Dimensions (lbs)'])) {
+            $dimensioBestBuy3 = $specifications['Dimensions (lbs)'];
+        } else {
+            $dimensioBestBuy3 = 'N/A';
+        }
+
         // $whatsInTheBox = $specifications['Other Input or Output Ports'];
         // $batteryPowerSource = $specifications['Battery Type'];
     }
