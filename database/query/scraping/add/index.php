@@ -623,7 +623,7 @@ if ($source == 'bestbuy') {
     // Extract the brand
     $brandLink = $xpath->query("//div[@class='modelInformation__LaWR']//a[@class='link_3hcyN brand-link']")[0];
     if (empty($brandLink)) {
-        $brandLink = 'N/A';
+        $brandNameBestBuy = 'N/A';
     } else {
         $brandNameBestBuy = trim($brandLink->textContent);
     }
