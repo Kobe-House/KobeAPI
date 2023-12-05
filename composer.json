@@ -14,7 +14,8 @@
     "symfony/css-selector": "^6.3",
     "browshot-php/browshot": "dev-master",
     "voku/simple_html_dom": "^4.8",
-    "php-webdriver/webdriver": "^1.15"
+    "php-webdriver/webdriver": "^1.15",
+    "firebase/php-jwt": "^6.10"
   },
   "config": {
     "platform-check": false

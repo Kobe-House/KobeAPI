@@ -3,7 +3,7 @@
         'name' => 'nick/kobe-api',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'e86e22caca261648a4cb3e3a58b1061412889157',
+        'reference' => '8ad89b509ae9c0ad5a4ff07f585d38b0fc5f343c',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -26,6 +26,15 @@
             'replaced' => array(
                 0 => '*',
             ),
+        ),
+        'firebase/php-jwt' => array(
+            'pretty_version' => 'v6.10.0',
+            'version' => '6.10.0.0',
+            'reference' => 'a49db6f0a5033aef5143295342f1c95521b075ff',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../firebase/php-jwt',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
         'graham-campbell/result-type' => array(
             'pretty_version' => 'v1.1.1',
@@ -75,7 +84,7 @@
         'nick/kobe-api' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'e86e22caca261648a4cb3e3a58b1061412889157',
+            'reference' => '8ad89b509ae9c0ad5a4ff07f585d38b0fc5f343c',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

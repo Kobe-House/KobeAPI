@@ -49,6 +49,7 @@ class ComposerStaticInit1476f78d9206eaf0d8e4cb21d5406361
         ),
         'F' => 
         array (
+            'Firebase\\JWT\\' => 13,
             'Facebook\\WebDriver\\' => 19,
         ),
         'D' => 
@@ -118,6 +119,10 @@ class ComposerStaticInit1476f78d9206eaf0d8e4cb21d5406361
         'GrahamCampbell\\ResultType\\' => 
         array (
             0 => __DIR__ . '/..' . '/graham-campbell/result-type/src',
+        ),
+        'Firebase\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
         ),
         'Facebook\\WebDriver\\' => 
         array (
