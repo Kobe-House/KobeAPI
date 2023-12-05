@@ -101,3 +101,13 @@ if ($carouselContainer->length > 0) {
         $resultWalmart = $mysqli->query($insertAltImagesWalmart);
     }
 }
+if (!$result && !$descriptionResult) {
+    //echo json_encode(["Product Error:" => $mysqli->error]);
+    var_dump($mysqli->error);
+    exit();
+} else {
+    echo "<br>Result Query: ";
+    var_dump($result);
+    //echo json_encode($descriptionResult);
+    echo json_encode(["Result:" => "The Insert Query Done!"]);
+}
