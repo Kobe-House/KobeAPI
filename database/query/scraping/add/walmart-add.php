@@ -40,18 +40,22 @@ foreach ($walmartDescription as $description) {
     $descriptions[] = trim($description);
 }
 
-// Print the individual descriptions
-//print_r($descriptions);
-
 //INSERT QUERY WALMART
-$sql = "INSERT INTO `product` (`title`, `image_url`, `source`) 
-            VALUES ('$productTitleWalmart', '$imageURLWalmart', '$source')";
 $sql = "INSERT INTO 
              `product` (`title`, `image_url`, `created_at`, `item_model`, `asin`, `color`, `source`, `size`, `url`) 
              VALUES ('$productTitleWalmart', '$imageURLWalmart', now(), '$upc', '$sku', '$colour', '$source', '$size', '$scrapingURL')";
+echo "<br> PRODUCT INSERT: ";
+var_dump($sql);
 
 $result = $mysqli->query($sql);
+
+echo "<br> PRODUCT QUERY RESULT: ";
+var_dump($result);
+
 $productIdWalmart = $mysqli->insert_id;
+
+echo "<br> Product ID:";
+var_dump($productIdWalmart);
 
 //Adding the descriptions
 
@@ -65,7 +69,13 @@ foreach ($descriptions as $descriptionItem) {
 
     $descriptionInsertSql = "INSERT INTO `product_description` (`product_id`, `description_name`)
                                     VALUES ($productIdWalmart, '$descriptionItemEscaped')";
+    echo "<br> Description:";
+    var_dump($descriptions);
+
     $descriptionResult = $mysqli->query($descriptionInsertSql);
+
+    echo "<br>Description result: ";
+    var_dump($descriptionResult);
 }
 
 //Selecting Other Multiple Alternative Images
@@ -100,6 +110,11 @@ if ($carouselContainer->length > 0) {
 
         $resultWalmart = $mysqli->query($insertAltImagesWalmart);
     }
+    echo "<br>alternateImageURLs: ";
+    var_dump($alternateImageURLs);
+
+    echo "<br>alternateImageURLs result: ";
+    var_dump($resultWalmart);
 }
 if (!$result && !$descriptionResult) {
     //echo json_encode(["Product Error:" => $mysqli->error]);
