@@ -393,6 +393,8 @@ var_dump($specialFeaturesFinal);
 //INSERT INTO THE DTABASE
 $sql = "INSERT INTO `product` (`title`, `image_url`, `url`, `created_at`, `item_model`, `parcel_dimensions`, `asin`, `manufacturer`, `item_weight`, `size`, `special_features`, `color`, `brand`, `source`) 
             VALUES ('$productTitle', '$imageURL', '$scrapingURL', now(), '$itemModelNumberFinal', '$itemDimensionFinal', '$asinFinal', '$manufacturerFinal', '$itemWeightFinal', '$sizeFinal', '$specialFeaturesFinal', '$colorFinal', '$brandFinal', '$source')";
+echo "<br> Product info before Query: ";
+var_dump($sql);
 $result = $mysqli->query($sql);
 
 $productIdAmazon = $mysqli->insert_id;
@@ -402,6 +404,8 @@ foreach ($descriptions as $productDescription) {
     $productDescription = trim($mysqli->real_escape_string($productDescription));
     $descriptionInsertSql = "INSERT INTO `product_description` (`product_id`, `description_name`)
                                 VALUES ($productIdAmazon, '$productDescription')";
+    echo "<br> Description before Query: ";
+    var_dump($descriptionInsertSql);
     $descriptionResult = $mysqli->query($descriptionInsertSql);
 }
 echo "<br><br>Description: ";
@@ -424,7 +428,8 @@ if (!empty($horAdditionaImages)) {
         $insertAltImagesWalmart = "INSERT INTO `product_images` 
         (`product_id`, `product_image_url`) 
         VALUES('$productIdAmazon', '$url')";
-
+        echo "<br> Alt Hori Images before Query: ";
+        var_dump($insertAltImagesWalmart);
         $altImgResultAmazon = $mysqli->query($insertAltImagesWalmart);
     }
 } else {
@@ -439,7 +444,8 @@ if (!empty($vertAdditionaImages)) {
         $insertAltImagesWalmart = "INSERT INTO `product_images` 
         (`product_id`, `product_image_url`) 
         VALUES('$productIdAmazon', '$url')";
-
+        echo "<br> Alt Vertical Images before Query: ";
+        var_dump($insertAltImagesWalmart);
         $altImgResultAmazon = $mysqli->query($insertAltImagesWalmart);
     }
 } else {
