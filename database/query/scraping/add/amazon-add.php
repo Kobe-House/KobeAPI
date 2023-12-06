@@ -402,11 +402,11 @@ $productIdAmazon = $mysqli->insert_id;
 echo "<br> THE PRODUCT ID IS:";
 var_dump($productIdAmazon);
 
-// //ADD PRODCUT DESCRIPTION
+//ADD PRODCUT DESCRIPTION
 // foreach ($descriptions as $productDescription) {
 //     $productDescription = trim($mysqli->real_escape_string($productDescription));
 //     $descriptionInsertSql = "INSERT INTO `product_description` (`product_id`, `description_name`)
-//                                 VALUES ($productIdAmazon, '$productDescription')";
+//                                 VALUES ('$productIdAmazon', '$productDescription')";
 //     echo "<br> Description before Query: ";
 //     var_dump($descriptionInsertSql);
 //     $descriptionResult = $mysqli->query($descriptionInsertSql);
