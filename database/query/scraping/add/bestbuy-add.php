@@ -156,9 +156,6 @@ $mainImageURL = $xpath->evaluate("string(//div[@data-automation='media-gallery-p
 $sql = "INSERT INTO 
         `product` (`title`, `image_url`, `created_at`, `item_model`, `parcel_dimensions`, `asin`, `item_weight`, `color`, `brand`, `source`, `item_height`, `url`) 
         VALUES ('$productTitleBestBuy', '$mainImageURL', now(), '$modelNumberBestBuy', '$dimensioBestBuyFinal', '$webCodeBestBuy', '$weightBestBuyFinal', '$colorBestBuy', '$brandNameBestBuy', '$source', '$heightBestBuyFinal', '$scrapingURL')";
-// $sql = "INSERT INTO 
-// `product` (`title`, `image_url`, `url`, `created_at`, `item_model`, `parcel_dimensions`, `asin`, `manufacturer`, `item_weight`, `size`, `special_features`, `color`, `brand`, `source`) 
-// VALUES ('$productTitleBestBuy', '$imageURL', '$scrapingURL', now(), '$modelNumberBestBuy', '$dimensioBestBuy', '$webCodeBestBuy', '$manufacturerFinal', '$weightBestBuy', '$sizeFinal', '$specialFeaturesFinal', '$colorBestBuy', '$brandNameBestBuy', '$source')";
 $result = $mysqli->query($sql);
 
 $productIdBestBuy = $mysqli->insert_id;
@@ -199,12 +196,8 @@ if (!empty($bestbuyAdditionalImages)) {
     echo json_encode("No Additional Images");
 }
 if (!$result && !$descriptionResult) {
-    //echo json_encode(["Product Error:" => $mysqli->error]);
-    var_dump($mysqli->error);
+    echo json_encode(["Product Error:" => $mysqli->error]);
     exit();
 } else {
-    echo "<br>Result Query: ";
-    var_dump($result);
-    //echo json_encode($descriptionResult);
     echo json_encode(["Result:" => "The Insert Query Done!"]);
 }

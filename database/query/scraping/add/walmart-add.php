@@ -44,92 +44,61 @@ foreach ($walmartDescription as $description) {
 $sql = "INSERT INTO 
              `product` (`title`, `image_url`, `created_at`, `item_model`, `asin`, `color`, `source`, `size`, `url`) 
              VALUES ('$productTitleWalmart', '$imageURLWalmart', now(), '$upc', '$sku', '$colour', '$source', '$size', '$scrapingURL')";
-echo "<br> PRODUCT INSERT: ";
-var_dump($sql);
 
 $result = $mysqli->query($sql);
-
-echo "<br> PRODUCT QUERY RESULT: ";
-var_dump($result);
-
 $productIdWalmart = $mysqli->insert_id;
-
-if (!$result) {
-    echo json_encode(["Product Error:" => $mysqli->error]);
-    exit();
-} else {
-    echo "<br>Result Query: ";
-    var_dump($result);
-    echo "<br> Product ID:";
-    var_dump($productIdWalmart);
-}
 
 //Adding the descriptions
 
-// foreach ($descriptions as $descriptionItem) {
+foreach ($descriptions as $descriptionItem) {
 
-//     // Extract text content from the DOMElement
-//     $descriptionText = trim($descriptionItem);
+    // Extract text content from the DOMElement
+    $descriptionText = trim($descriptionItem);
 
-//     // Use real_escape_string on the extracted string
-//     $descriptionItemEscaped = $mysqli->real_escape_string($descriptionText);
+    // Use real_escape_string on the extracted string
+    $descriptionItemEscaped = $mysqli->real_escape_string($descriptionText);
 
-//     $descriptionInsertSql = "INSERT INTO `product_description` (`product_id`, `description_name`)
-//                                     VALUES ($productIdWalmart, '$descriptionItemEscaped')";
-//     echo "<br> Description:";
-//     var_dump($descriptions);
+    $descriptionInsertSql = "INSERT INTO `product_description` (`product_id`, `description_name`)
+                                    VALUES ($productIdWalmart, '$descriptionItemEscaped')";
+    $descriptionResult = $mysqli->query($descriptionInsertSql);
+}
 
-//     $descriptionResult = $mysqli->query($descriptionInsertSql);
+//Selecting Other Multiple Alternative Images
+$carouselContainer = $xpath->query('//div[@data-testid="vertical-carousel-container"]');
 
-//     echo "<br>Description result: ";
-//     var_dump($descriptionResult);
-// }
+if ($carouselContainer->length > 0) {
+    // Within the carousel container, find all the image buttons
+    $imageButtons = $xpath->query('.//button[@data-testid="item-page-vertical-carousel-hero-image-button"]', $carouselContainer->item(0));
 
-// //Selecting Other Multiple Alternative Images
-// $carouselContainer = $xpath->query('//div[@data-testid="vertical-carousel-container"]');
+    // Initialize an array to store the image URLs
+    $alternateImageURLs = [];
 
-// if ($carouselContainer->length > 0) {
-//     // Within the carousel container, find all the image buttons
-//     $imageButtons = $xpath->query('.//button[@data-testid="item-page-vertical-carousel-hero-image-button"]', $carouselContainer->item(0));
+    // Loop through each image button and extract the image URL
+    foreach ($imageButtons as $button) {
+        $imageElement = $xpath->query('.//img', $button);
 
-//     // Initialize an array to store the image URLs
-//     $alternateImageURLs = [];
+        if ($imageElement->length > 0) {
+            $nonCleanedImageAlt = $imageElement->item(0)->attributes->getNamedItem('src')->nodeValue;
 
-//     // Loop through each image button and extract the image URL
-//     foreach ($imageButtons as $button) {
-//         $imageElement = $xpath->query('.//img', $button);
+            $parsedURL = parse_url($nonCleanedImageAlt);
+            $imageURLAlt = $parsedURL['scheme'] . '://' . $parsedURL['host'] . $parsedURL['path'];
+            $alternateImageURLs[] = $imageURLAlt;
+        }
+    }
 
-//         if ($imageElement->length > 0) {
-//             $nonCleanedImageAlt = $imageElement->item(0)->attributes->getNamedItem('src')->nodeValue;
+    // Use the array of alternate image URLs as needed
+    foreach ($alternateImageURLs as $index => $url) {
 
-//             $parsedURL = parse_url($nonCleanedImageAlt);
-//             $imageURLAlt = $parsedURL['scheme'] . '://' . $parsedURL['host'] . $parsedURL['path'];
-//             $alternateImageURLs[] = $imageURLAlt;
-//         }
-//     }
+        $insertAltImagesWalmart = "INSERT INTO `product_images` 
+                (`product_id`, `product_image_url`) 
+                VALUES('$productIdWalmart', '$url')";
 
-//     // Use the array of alternate image URLs as needed
-//     foreach ($alternateImageURLs as $index => $url) {
-
-//         $insertAltImagesWalmart = "INSERT INTO `product_images` 
-//                 (`product_id`, `product_image_url`) 
-//                 VALUES('$productIdWalmart', '$url')";
-
-//         $resultWalmart = $mysqli->query($insertAltImagesWalmart);
-//     }
-//     echo "<br>alternateImageURLs: ";
-//     var_dump($alternateImageURLs);
-
-//     echo "<br>alternateImageURLs result: ";
-//     var_dump($resultWalmart);
-// }
-// if (!$result && !$descriptionResult) {
-//     //echo json_encode(["Product Error:" => $mysqli->error]);
-//     var_dump($mysqli->error);
-//     exit();
-// } else {
-//     echo "<br>Result Query: ";
-//     var_dump($result);
-//     //echo json_encode($descriptionResult);
-//     echo json_encode(["Result:" => "The Insert Query Done!"]);
-// }
+        $resultWalmart = $mysqli->query($insertAltImagesWalmart);
+    }
+}
+if (!$result && !$descriptionResult) {
+    echo json_encode(["Product Error:" => $mysqli->error]);
+    exit();
+} else {
+    echo json_encode(["Result:" => "The Insert Query Done!"]);
+}

@@ -373,46 +373,20 @@ $specialFeaturesFinal = $mysqli->real_escape_string($specialFeaturesFinal);
 $sizeFinal = $mysqli->real_escape_string($sizeFinal);
 $colorFinal = $mysqli->real_escape_string($colorFinal);
 
-echo "<br>asinFinal: ";
-var_dump($asinFinal);
-echo "<br>manufacturerFinal: ";
-var_dump($manufacturerFinal);
-echo "<br>brandFinal: ";
-var_dump($brandFinal);
-echo "<br>itemWeightFinal: ";
-var_dump($itemWeightFinal);
-echo "<br>itemDimensionFinal: ";
-var_dump($itemDimensionFinal);
-echo "<br>itemModelNumberFinal: ";
-var_dump($itemModelNumberFinal);
-echo "<br>specialFeaturesFinal: ";
-var_dump($specialFeaturesFinal);
-echo "<br>specialFeaturesFinal: ";
-var_dump($specialFeaturesFinal);
-
 //INSERT INTO THE DTABASE
 $sql = "INSERT INTO `product` (`title`, `image_url`, `url`, `created_at`, `item_model`, `parcel_dimensions`, `asin`, `manufacturer`, `item_weight`, `size`, `special_features`, `color`, `brand`, `source`) 
             VALUES ('$productTitle', '$imageURL', '$scrapingURL', now(), '$itemModelNumberFinal', '$itemDimensionFinal', '$asinFinal', '$manufacturerFinal', '$itemWeightFinal', '$sizeFinal', '$specialFeaturesFinal', '$colorFinal', '$brandFinal', '$source')";
-echo "<br> Product info before Query: ";
-var_dump($sql);
 $result = $mysqli->query($sql);
 
 $productIdAmazon = $mysqli->insert_id;
-
-echo "<br> THE PRODUCT ID IS:";
-var_dump($productIdAmazon);
 
 //ADD PRODCUT DESCRIPTION
 foreach ($descriptions as $productDescription) {
     $productDescription = trim($mysqli->real_escape_string($productDescription));
     $descriptionInsertSql = "INSERT INTO `product_description` (`product_id`, `description_name`)
                                 VALUES ('$productIdAmazon', '$productDescription')";
-    echo "<br> Description before Query: ";
-    var_dump($descriptionInsertSql);
     $descriptionResult = $mysqli->query($descriptionInsertSql);
 }
-echo "<br><br>Description: ";
-var_dump($descriptions);
 //Additional Images
 
 //Horizontal Additional Images
@@ -431,15 +405,11 @@ if (!empty($horAdditionaImages)) {
         $insertAltImagesWalmart = "INSERT INTO `product_images` 
         (`product_id`, `product_image_url`) 
         VALUES('$productIdAmazon', '$url')";
-        echo "<br> Alt Hori Images before Query: ";
-        var_dump($insertAltImagesWalmart);
         $altImgResultAmazon = $mysqli->query($insertAltImagesWalmart);
     }
 } else {
     echo json_encode("No Horizantal Images");
 }
-echo "<br><br>Horizontal Images: ";
-var_dump($horAdditionaImages);
 
 if (!empty($vertAdditionaImages)) {
     foreach ($vertAdditionaImages as $index => $url) {
@@ -447,23 +417,16 @@ if (!empty($vertAdditionaImages)) {
         $insertAltImagesWalmart = "INSERT INTO `product_images` 
         (`product_id`, `product_image_url`) 
         VALUES('$productIdAmazon', '$url')";
-        echo "<br> Alt Vertical Images before Query: ";
-        var_dump($insertAltImagesWalmart);
         $altImgResultAmazon = $mysqli->query($insertAltImagesWalmart);
     }
 } else {
     echo json_encode("No Horizantal Images");
 }
-echo "<br><br>Vertical Images: ";
-var_dump($vertAdditionaImages);
+
 //Error Handling
 if (!$result) {
-    //echo json_encode(["Product Error:" => $mysqli->error]);
-    var_dump($mysqli->error);
+    echo json_encode(["Product Error:" => $mysqli->error]);
     exit();
 } else {
-    echo "<br>Result Query: ";
-    var_dump($result);
-    //echo json_encode($descriptionResult);
     echo json_encode(["Result:" => "The Insert Query Done!"]);
 }
