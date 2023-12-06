@@ -54,8 +54,15 @@ var_dump($result);
 
 $productIdWalmart = $mysqli->insert_id;
 
-echo "<br> Product ID:";
-var_dump($productIdWalmart);
+if (!$result) {
+    echo json_encode(["Product Error:" => $mysqli->error]);
+    exit();
+} else {
+    echo "<br>Result Query: ";
+    var_dump($result);
+    echo "<br> Product ID:";
+    var_dump($productIdWalmart);
+}
 
 //Adding the descriptions
 
