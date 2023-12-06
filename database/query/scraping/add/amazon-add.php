@@ -399,62 +399,65 @@ $result = $mysqli->query($sql);
 
 $productIdAmazon = $mysqli->insert_id;
 
-//ADD PRODCUT DESCRIPTION
-foreach ($descriptions as $productDescription) {
-    $productDescription = trim($mysqli->real_escape_string($productDescription));
-    $descriptionInsertSql = "INSERT INTO `product_description` (`product_id`, `description_name`)
-                                VALUES ($productIdAmazon, '$productDescription')";
-    echo "<br> Description before Query: ";
-    var_dump($descriptionInsertSql);
-    $descriptionResult = $mysqli->query($descriptionInsertSql);
-}
-echo "<br><br>Description: ";
-var_dump($descriptions);
-//Additional Images
+echo "<br> THE PRODUCT ID IS:";
+var_dump($productIdAmazon);
 
-//Horizontal Additional Images
-$horAdditionaImages = scrapeAmazon($scrapingURL, $apiKey);
+// //ADD PRODCUT DESCRIPTION
+// foreach ($descriptions as $productDescription) {
+//     $productDescription = trim($mysqli->real_escape_string($productDescription));
+//     $descriptionInsertSql = "INSERT INTO `product_description` (`product_id`, `description_name`)
+//                                 VALUES ($productIdAmazon, '$productDescription')";
+//     echo "<br> Description before Query: ";
+//     var_dump($descriptionInsertSql);
+//     $descriptionResult = $mysqli->query($descriptionInsertSql);
+// }
+// echo "<br><br>Description: ";
+// var_dump($descriptions);
+// //Additional Images
 
-//Vertical Additional Images
-$vertAdditionaImages = [];
-$nodes = $xpath->query("//span[@class='a-button-text']//img/@src");
-foreach ($nodes as $node) {
-    $vertAdditionaImages[] = $node->value;
-}
+// //Horizontal Additional Images
+// $horAdditionaImages = scrapeAmazon($scrapingURL, $apiKey);
 
-if (!empty($horAdditionaImages)) {
-    foreach ($horAdditionaImages as $index => $url) {
+// //Vertical Additional Images
+// $vertAdditionaImages = [];
+// $nodes = $xpath->query("//span[@class='a-button-text']//img/@src");
+// foreach ($nodes as $node) {
+//     $vertAdditionaImages[] = $node->value;
+// }
 
-        $insertAltImagesWalmart = "INSERT INTO `product_images` 
-        (`product_id`, `product_image_url`) 
-        VALUES('$productIdAmazon', '$url')";
-        echo "<br> Alt Hori Images before Query: ";
-        var_dump($insertAltImagesWalmart);
-        $altImgResultAmazon = $mysqli->query($insertAltImagesWalmart);
-    }
-} else {
-    echo json_encode("No Horizantal Images");
-}
-echo "<br><br>Horizontal Images: ";
-var_dump($horAdditionaImages);
+// if (!empty($horAdditionaImages)) {
+//     foreach ($horAdditionaImages as $index => $url) {
 
-if (!empty($vertAdditionaImages)) {
-    foreach ($vertAdditionaImages as $index => $url) {
+//         $insertAltImagesWalmart = "INSERT INTO `product_images` 
+//         (`product_id`, `product_image_url`) 
+//         VALUES('$productIdAmazon', '$url')";
+//         echo "<br> Alt Hori Images before Query: ";
+//         var_dump($insertAltImagesWalmart);
+//         $altImgResultAmazon = $mysqli->query($insertAltImagesWalmart);
+//     }
+// } else {
+//     echo json_encode("No Horizantal Images");
+// }
+// echo "<br><br>Horizontal Images: ";
+// var_dump($horAdditionaImages);
 
-        $insertAltImagesWalmart = "INSERT INTO `product_images` 
-        (`product_id`, `product_image_url`) 
-        VALUES('$productIdAmazon', '$url')";
-        echo "<br> Alt Vertical Images before Query: ";
-        var_dump($insertAltImagesWalmart);
-        $altImgResultAmazon = $mysqli->query($insertAltImagesWalmart);
-    }
-} else {
-    echo json_encode("No Horizantal Images");
-}
-echo "<br><br>Vertical Images: ";
-var_dump($vertAdditionaImages);
+// if (!empty($vertAdditionaImages)) {
+//     foreach ($vertAdditionaImages as $index => $url) {
+
+//         $insertAltImagesWalmart = "INSERT INTO `product_images` 
+//         (`product_id`, `product_image_url`) 
+//         VALUES('$productIdAmazon', '$url')";
+//         echo "<br> Alt Vertical Images before Query: ";
+//         var_dump($insertAltImagesWalmart);
+//         $altImgResultAmazon = $mysqli->query($insertAltImagesWalmart);
+//     }
+// } else {
+//     echo json_encode("No Horizantal Images");
+// }
+// echo "<br><br>Vertical Images: ";
+// var_dump($vertAdditionaImages);
 //Error Handling
-if (!$result && !$descriptionResult) {
+if (!$result) {
     //echo json_encode(["Product Error:" => $mysqli->error]);
     var_dump($mysqli->error);
     exit();
