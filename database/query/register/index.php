@@ -94,22 +94,22 @@ if ($apiData->email != NULL) {
                 exit();
             } else {
                 echo json_encode(["Success Registration" => "Registration Successfully"]);
-                // Send Email to Notify Registration Confirmation
-                // $fromtext = "info@kobewarehouse.com";
-                // $headers = "MIME-Version: 1.0\n";
-                // $headers .= 'Content-type: text/plain; charset=UTF-8' . "\r\n";
-                // $headers .= "From: " . $fromtext . "\n";
+                //Send Email to Notify Registration Confirmation
+                $fromtext = "info@kobewarehouse.com";
+                $headers = "MIME-Version: 1.0\n";
+                $headers .= 'Content-type: text/plain; charset=UTF-8' . "\r\n";
+                $headers .= "From: " . $fromtext . "\n";
 
-                // $subject = "Registration Confirmation";
+                $subject = "Registration Confirmation";
 
-                // $body = "Dear " . $userName . ",\r\n\r\n";
-                // $body .= "This is to confirm that your account has be created successfully, \r\n Find the link below to LOGIN into your account:\r\n\r\n";
-                // $body .= "- Link: <b>http://localhost:3000/#/login/\r\n";
-                // $body .= "NB: You must Login to view your Campaign \r\n\r\n";
-                // $body .= "Best Regards,\r\n Kobe Warehouse Canada";
+                $body = "Dear " . $userName . ",\r\n\r\n";
+                $body .= "This is to confirm that your account has be created successfully, \r\n Find the link below to LOGIN into your account:\r\n\r\n";
+                $body .= "- Link: <b>http://localhost:3000/#/login/\r\n";
+                $body .= "NB: You must Login to view your Campaign \r\n\r\n";
+                $body .= "Best Regards,\r\n Kobe Warehouse Canada";
 
-                // $recipient = "$email";
-                // mail($recipient, $subject, $body, $headers);
+                $recipient = "$email";
+                mail($recipient, $subject, $body, $headers);
             }
         }
     }
