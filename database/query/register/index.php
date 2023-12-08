@@ -97,16 +97,34 @@ if ($apiData->email != NULL) {
                 //Send Email to Notify Registration Confirmation
                 $fromtext = "info@kobewarehouse.com";
                 $headers = "MIME-Version: 1.0\n";
-                $headers .= 'Content-type: text/plain; charset=UTF-8' . "\r\n";
+                $headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
                 $headers .= "From: " . $fromtext . "\n";
 
                 $subject = "Registration Confirmation";
-
-                $body = "Dear " . $userName . ",\r\n\r\n";
-                $body .= "This is to confirm that your account has be created successfully, \r\n Find the link below to LOGIN into your account:\r\n\r\n";
-                $body .= "- Link: <b>http://localhost:3000/#/login/\r\n";
-                $body .= "NB: You must Login to view your Campaign \r\n\r\n";
-                $body .= "Best Regards,\r\n Kobe Warehouse Canada";
+                $body = "<html>
+                            <head>
+                                <style>
+                                body {
+                                    font-family: 'Arial', sans-serif;
+                                    text-align: center;
+                                }
+                                h1 {
+                                    font-size: 20px;
+                                }
+                                p {
+                                    font-size: 13px;
+                                }
+                                </style>
+                            </head>
+                            <body>
+                                <h1>Dear " . $userName . ",</h1>
+                                <p>This is to confirm that your account has been created successfully.</p>
+                                <p>Find the link below to <strong>LOGIN</strong> into your account:</p>
+                                <p>- Link: <a href='http://sellerzone.io/#/login/' style='font-weight: bold;'>http://sellerzone.io/#/login/</a></p>
+                                <p><strong>NB:</strong> You must login to view your Campaign.</p>
+                                <p>Best Regards,<br>Kobe Warehouse Canada</p>
+                            </body>
+                        </html>";
 
                 $recipient = "$email";
                 mail($recipient, $subject, $body, $headers);
