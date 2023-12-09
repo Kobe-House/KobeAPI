@@ -93,7 +93,6 @@ if ($apiData->email != NULL) {
                 printf("%s\n", $mysqli->error);
                 exit();
             } else {
-                echo json_encode(["Success Registration" => "Registration Successfully"]);
                 //Send Email to Notify Registration Confirmation
                 $fromtext = "info@kobewarehouse.com";
                 $headers = "MIME-Version: 1.0\n";
@@ -117,17 +116,22 @@ if ($apiData->email != NULL) {
                                 </style>
                             </head>
                             <body>
-                                <h1>Dear " . $userName . ",</h1>
+                                <h1>Dear " . $firstName . ",</h1>
                                 <p>This is to confirm that your account has been created successfully.</p>
                                 <p>Find the link below to <strong>LOGIN</strong> into your account:</p>
                                 <p>- Link: <a href='http://sellerzone.io/#/login/' style='font-weight: bold;'>http://sellerzone.io/#/login/</a></p>
-                                <p><strong>NB:</strong> You must login to view your Campaign.</p>
+                                <p><strong>NB:</strong> Use Your Email To Login.</p>
                                 <p>Best Regards,<br>Kobe Warehouse Canada</p>
                             </body>
                         </html>";
 
                 $recipient = "$email";
-                mail($recipient, $subject, $body, $headers);
+                $emailSent = mail($recipient, $subject, $body, $headers);
+            }
+            if ($emailSent) {
+                echo json_encode(["Success Registration" => "Registration Successfully"]);
+            } else {
+                echo json_encode(["Email Msg" => "Email Not sent"]);
             }
         }
     }
