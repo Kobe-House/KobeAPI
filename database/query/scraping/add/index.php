@@ -30,8 +30,12 @@
     $json = file_get_contents('php://input', true);
     $data = json_decode($json);
 
-    //Getting the URL
+    //--------Get Scraping Source-----
+    $source = $data->source;
+    //-------Getting the URL--------
     $scrapingURL = $data->searchText;
+    //-------Get Guid----------------
+    $guid = $data->guid;
 
     //Implementing Guzzle
     $client = new GuzzleHttp\Client();
@@ -52,11 +56,6 @@
     $dom = new DOMDocument();
     @$dom->loadHTML($http_response_body);
     $xpath = new DOMXPath($dom);
-
-
-
-    //Get Scraping Source
-    $source = $data->source;
 
     /* -------------------------------------------------------------------------- */
     /*                                   Amazon                                   */

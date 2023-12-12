@@ -154,8 +154,8 @@ $mainImageURL = $xpath->evaluate("string(//div[@data-automation='media-gallery-p
 
 //INSERT INTO THE DTABASE BEST BUY
 $sql = "INSERT INTO 
-        `product` (`title`, `image_url`, `created_at`, `item_model`, `parcel_dimensions`, `asin`, `item_weight`, `color`, `brand`, `source`, `item_height`, `url`) 
-        VALUES ('$productTitleBestBuy', '$mainImageURL', now(), '$modelNumberBestBuy', '$dimensioBestBuyFinal', '$webCodeBestBuy', '$weightBestBuyFinal', '$colorBestBuy', '$brandNameBestBuy', '$source', '$heightBestBuyFinal', '$scrapingURL')";
+        `product` (`title`, `image_url`, `created_at`, `item_model`, `parcel_dimensions`, `asin`, `item_weight`, `color`, `brand`, `source`, `item_height`, `url`, `user_guid`) 
+        VALUES ('$productTitleBestBuy', '$mainImageURL', now(), '$modelNumberBestBuy', '$dimensioBestBuyFinal', '$webCodeBestBuy', '$weightBestBuyFinal', '$colorBestBuy', '$brandNameBestBuy', '$source', '$heightBestBuyFinal', '$scrapingURL', '$guid')";
 $result = $mysqli->query($sql);
 
 $productIdBestBuy = $mysqli->insert_id;

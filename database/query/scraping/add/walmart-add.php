@@ -1,6 +1,5 @@
 <?php
 
-
 //Extracting Product Title
 $titleElement = $xpath->query('//h1[@id="main-title"]');
 if ($titleElement->length > 0) {
@@ -42,8 +41,8 @@ foreach ($walmartDescription as $description) {
 
 //INSERT QUERY WALMART
 $sql = "INSERT INTO 
-             `product` (`title`, `image_url`, `created_at`, `item_model`, `asin`, `color`, `source`, `size`, `url`) 
-             VALUES ('$productTitleWalmart', '$imageURLWalmart', now(), '$upc', '$sku', '$colour', '$source', '$size', '$scrapingURL')";
+             `product` (`title`, `image_url`, `created_at`, `item_model`, `asin`, `color`, `source`, `size`, `url`, `user_guid`) 
+             VALUES ('$productTitleWalmart', '$imageURLWalmart', now(), '$upc', '$sku', '$colour', '$source', '$size', '$scrapingURL', '$guid')";
 
 $result = $mysqli->query($sql);
 $productIdWalmart = $mysqli->insert_id;

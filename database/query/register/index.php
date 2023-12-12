@@ -94,45 +94,46 @@ if ($apiData->email != NULL) {
                 exit();
             } else {
                 //Send Email to Notify Registration Confirmation
-                $fromtext = "info@kobewarehouse.com";
-                $headers = "MIME-Version: 1.0\n";
-                $headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
-                $headers .= "From: " . $fromtext . "\n";
+                // $fromtext = "info@kobewarehouse.com";
+                // $headers = "MIME-Version: 1.0\n";
+                // $headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
+                // $headers .= "From: " . $fromtext . "\n";
 
-                $subject = "Registration Confirmation";
-                $body = "<html>
-                            <head>
-                                <style>
-                                body {
-                                    font-family: 'Arial', sans-serif;
-                                    text-align: center;
-                                }
-                                h1 {
-                                    font-size: 20px;
-                                }
-                                p {
-                                    font-size: 13px;
-                                }
-                                </style>
-                            </head>
-                            <body>
-                                <h1>Dear " . $firstName . ",</h1>
-                                <p>This is to confirm that your account has been created successfully.</p>
-                                <p>Find the link below to <strong>LOGIN</strong> into your account:</p>
-                                <p>- Link: <a href='http://sellerzone.io/#/login/' style='font-weight: bold;'>http://sellerzone.io/#/login/</a></p>
-                                <p><strong>NB:</strong> Use Your Email To Login.</p>
-                                <p>Best Regards,<br>Kobe Warehouse Canada</p>
-                            </body>
-                        </html>";
+                // $subject = "Registration Confirmation";
+                // $body = "<html>
+                //             <head>
+                //                 <style>
+                //                 body {
+                //                     font-family: 'Arial', sans-serif;
+                //                     text-align: center;
+                //                 }
+                //                 h1 {
+                //                     font-size: 20px;
+                //                 }
+                //                 p {
+                //                     font-size: 13px;
+                //                 }
+                //                 </style>
+                //             </head>
+                //             <body>
+                //                 <h1>Dear " . $firstName . ",</h1>
+                //                 <p>This is to confirm that your account has been created successfully.</p>
+                //                 <p>Find the link below to <strong>LOGIN</strong> into your account:</p>
+                //                 <p>- Link: <a href='http://sellerzone.io/#/login/' style='font-weight: bold;'>http://sellerzone.io/#/login/</a></p>
+                //                 <p><strong>NB:</strong> Use Your Email To Login.</p>
+                //                 <p>Best Regards,<br>Kobe Warehouse Canada</p>
+                //             </body>
+                //         </html>";
 
-                $recipient = "$email";
-                $emailSent = mail($recipient, $subject, $body, $headers);
-            }
-            if ($emailSent) {
+                // $recipient = "$email";
+                // $emailSent = mail($recipient, $subject, $body, $headers);
                 echo json_encode(["Success Registration" => "Registration Successfully"]);
-            } else {
-                echo json_encode(["Email Msg" => "Email Not sent"]);
             }
+            // if ($emailSent) {
+            //     echo json_encode(["Success Registration" => "Registration Successfully"]);
+            // } else {
+            //     echo json_encode(["Email Msg" => "Email Not sent"]);
+            // }
         }
     }
 } else {
