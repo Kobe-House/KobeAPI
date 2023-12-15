@@ -47,9 +47,29 @@
     $data = json_decode($json);
 
     //--------Get Scraping Source-----
-    $source = $data->source;
+    $source = '';
     //-------Getting the URL--------
     $scrapingURL = $data->searchText;
+
+    // ----- Checking the Source ----
+
+    // ---- Define Pattterns for URLS
+
+    $amazonPattern = '/^(https?:\/\/)?(www\.)?(amazon\.com|amazon\.ca)/i';
+    $walmartPattern = '/^(https?:\/\/)?(www\.)?(walmart\.com|walmart\.ca)/i';
+    $bestbuyPattern = '/^(https?:\/\/)?(www\.)?(bestbuy\.com|bestbuy\.ca)/i';
+
+    // ----- Checking the Preg Match & Assigning Source------
+    if (preg_match($amazonPattern, $scrapingURL)) {
+        $source = 'amazon';
+    } elseif (preg_match($walmartPattern, $scrapingURL)) {
+        $source = 'walmart';
+    } elseif (preg_match($bestbuyPattern, $scrapingURL)) {
+        $source = 'bestbuy';
+    } else {
+        $source = 'Unkown';
+    }
+
     //-------Get Guid----------------
     //  $guid = $data->guid;
 

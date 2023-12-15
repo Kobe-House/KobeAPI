@@ -23,7 +23,9 @@ error_reporting(E_ALL);
 $json = file_get_contents('php://input', true);
 $apiData = json_decode($json);
 
-if ($apiData->email != NULL) {
+$email = $apiData->email;
+
+if ($email != NULL && filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
     $email = $apiData->email;
 
@@ -137,5 +139,5 @@ if ($apiData->email != NULL) {
         }
     }
 } else {
-    echo json_encode(["Enter Email" => "Email is required"]);
+    echo json_encode(["Valid Email" => "Valid Email"]);
 }
