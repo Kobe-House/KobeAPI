@@ -7,7 +7,7 @@
     if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
         // Return only the headers and not the content
         //header('Access-Control-Allow-Origin: http://localhost:3000');
-        header("Access-Control-Allow-Origin: http://sellerzone.io");
+        header("Access-Control-Allow-Origin: https://sellerzone.io");
         header('Access-Control-Allow-Methods: POST, GET, DELETE, PUT, PATCH, OPTIONS');
         header('Access-Control-Allow-Headers: Authorization, Content-Type');
         header('Content-Type: application/json;');
@@ -15,7 +15,7 @@
     }
     // Regular request processing
     //header('Access-Control-Allow-Origin: http://localhost:3000');
-    header("Access-Control-Allow-Origin: http://sellerzone.io");
+    header("Access-Control-Allow-Origin: https://sellerzone.io");
     header('Access-Control-Allow-Methods: POST, GET, DELETE, PUT, PATCH, OPTIONS');
     header('Access-Control-Allow-Headers: Authorization, Content-Type');
     header('Content-Type: application/json;');
