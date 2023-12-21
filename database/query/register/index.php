@@ -55,87 +55,95 @@ if ($email != NULL && filter_var($email, FILTER_VALIDATE_EMAIL)) {
         exit;
     } else {
 
-        //New Account Registration
+        // ----- Password policy opatterns ----
+        $passwordPolicyRegex = '/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/';
+        if (!preg_match($passwordPolicyRegex, $passWord)) {
 
-        //	Check if Passwords match
-        if ($passWord != $confirmPassWord) {
-            echo json_encode(["Password Mismatch" => "Password does not match confirm password"]);
-            exit;
+            // Password does not meet the policy
+            echo json_encode(["InvalidPassword" => "Password does not meet the policy requirements"]);
         } else {
+            //New Account Registration
 
-            //Encrypt the password
-            $cost = 10;
-            $salt = strtr(base64_encode(random_bytes(16)), '+', '.');
-            $salt = sprintf("$2a$%02d$", $cost) . $salt;
-            $hash = crypt($passWord, $salt);
+            //	Check if Passwords match
+            if ($passWord != $confirmPassWord) {
+                echo json_encode(["Password Mismatch" => "Password does not match confirm password"]);
+                exit;
+            } else {
 
-            function GUIDv4()
-            {
-                if (function_exists('openssl_random_pseudo_bytes') === true) {
-                    $data = openssl_random_pseudo_bytes(16);
-                    $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
-                    $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
-                    return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+                //Encrypt the password
+                $cost = 10;
+                $salt = strtr(base64_encode(random_bytes(16)), '+', '.');
+                $salt = sprintf("$2a$%02d$", $cost) . $salt;
+                $hash = crypt($passWord, $salt);
+
+                function GUIDv4()
+                {
+                    if (function_exists('openssl_random_pseudo_bytes') === true) {
+                        $data = openssl_random_pseudo_bytes(16);
+                        $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
+                        $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
+                        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+                    }
+                    return 'N/A';
                 }
-                return 'N/A';
-            }
 
-            $userGuid = GUIDv4();
+                $userGuid = GUIDv4();
 
-            // Get User's IP Address & Guid
-            $userIP = $_SERVER['REMOTE_ADDR'];
+                // Get User's IP Address & Guid
+                $userIP = $_SERVER['REMOTE_ADDR'];
 
-            // Insert user info
-            $registrationInsert = "INSERT INTO `users`
+                // Insert user info
+                $registrationInsert = "INSERT INTO `users`
                  (`username`, `password`, `email`, `access_level`, `firstname`, `lastname`, `ip`, `user_guid`, `active`, `created_at`)
                  VALUES ('$userName ', '$hash', '$email', 0, '$firstName', '$lastName', '$userIP', '$userGuid', 0, now())";
-            $queryResult = $mysqli->query($registrationInsert);
+                $queryResult = $mysqli->query($registrationInsert);
 
-            if (!$queryResult) {
-                printf("%s\n", $mysqli->error);
-                exit();
-            } else {
-                //Send Email to Notify Registration Confirmation
-                // $fromtext = "info@kobewarehouse.com";
-                // $headers = "MIME-Version: 1.0\n";
-                // $headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
-                // $headers .= "From: " . $fromtext . "\n";
+                if (!$queryResult) {
+                    printf("%s\n", $mysqli->error);
+                    exit();
+                } else {
+                    //Send Email to Notify Registration Confirmation
+                    // $fromtext = "info@kobewarehouse.com";
+                    // $headers = "MIME-Version: 1.0\n";
+                    // $headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
+                    // $headers .= "From: " . $fromtext . "\n";
 
-                // $subject = "Registration Confirmation";
-                // $body = "<html>
-                //             <head>
-                //                 <style>
-                //                 body {
-                //                     font-family: 'Arial', sans-serif;
-                //                     text-align: center;
-                //                 }
-                //                 h1 {
-                //                     font-size: 20px;
-                //                 }
-                //                 p {
-                //                     font-size: 13px;
-                //                 }
-                //                 </style>
-                //             </head>
-                //             <body>
-                //                 <h1>Dear " . $firstName . ",</h1>
-                //                 <p>This is to confirm that your account has been created successfully.</p>
-                //                 <p>Find the link below to <strong>LOGIN</strong> into your account:</p>
-                //                 <p>- Link: <a href='http://sellerzone.io/#/login/' style='font-weight: bold;'>http://sellerzone.io/#/login/</a></p>
-                //                 <p><strong>NB:</strong> Use Your Email To Login.</p>
-                //                 <p>Best Regards,<br>Kobe Warehouse Canada</p>
-                //             </body>
-                //         </html>";
+                    // $subject = "Registration Confirmation";
+                    // $body = "<html>
+                    //             <head>
+                    //                 <style>
+                    //                 body {
+                    //                     font-family: 'Arial', sans-serif;
+                    //                     text-align: center;
+                    //                 }
+                    //                 h1 {
+                    //                     font-size: 20px;
+                    //                 }
+                    //                 p {
+                    //                     font-size: 13px;
+                    //                 }
+                    //                 </style>
+                    //             </head>
+                    //             <body>
+                    //                 <h1>Dear " . $firstName . ",</h1>
+                    //                 <p>This is to confirm that your account has been created successfully.</p>
+                    //                 <p>Find the link below to <strong>LOGIN</strong> into your account:</p>
+                    //                 <p>- Link: <a href='http://sellerzone.io/#/login/' style='font-weight: bold;'>http://sellerzone.io/#/login/</a></p>
+                    //                 <p><strong>NB:</strong> Use Your Email To Login.</p>
+                    //                 <p>Best Regards,<br>Kobe Warehouse Canada</p>
+                    //             </body>
+                    //         </html>";
 
-                // $recipient = "$email";
-                // $emailSent = mail($recipient, $subject, $body, $headers);
-                echo json_encode(["Success Registration" => "Registration Successfully"]);
+                    // $recipient = "$email";
+                    // $emailSent = mail($recipient, $subject, $body, $headers);
+                    echo json_encode(["Success Registration" => "Registration Successfully"]);
+                }
+                // if ($emailSent) {
+                //     echo json_encode(["Success Registration" => "Registration Successfully"]);
+                // } else {
+                //     echo json_encode(["Email Msg" => "Email Not sent"]);
+                // }
             }
-            // if ($emailSent) {
-            //     echo json_encode(["Success Registration" => "Registration Successfully"]);
-            // } else {
-            //     echo json_encode(["Email Msg" => "Email Not sent"]);
-            // }
         }
     }
 } else {
