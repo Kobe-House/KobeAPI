@@ -34,7 +34,6 @@
                 die("Database Connection Failed: " . $this->db->connect_error);
             } else {
                 $this->connected = true;
-                //echo "Connected";
             }
         }
 

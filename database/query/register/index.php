@@ -56,14 +56,34 @@ if ($email != NULL && filter_var($email, FILTER_VALIDATE_EMAIL)) {
     } else {
 
         // ----- Password policy opatterns ----
-        $passwordPolicyRegex = '/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/';
-        if (!preg_match($passwordPolicyRegex, $passWord)) {
+        $hasUpperCase = preg_match('/[A-Z]/', $passWord);
+        $hasLowerCase = preg_match('/[a-z]/', $passWord);
+        $hasDigit = preg_match('/\d/', $passWord);
+        $hasSpecialCharacter =  preg_match('/[@$!%*?&]/', $passWord);
 
+        $errors = [];
+
+        // ----- Checking Each Password Polivy -----
+        if (strlen($passWord) < 8) {
+            $errors[] = "Password must be at least 8 characters long.";
+        }
+        if (!$hasUpperCase) {
+            $errors[] = "Password must contain at least one uppercase letter.";
+        }
+
+        if (!$hasDigit) {
+            $errors[] = "Password must contain at least one digit.";
+        }
+
+        if (!$hasSpecialCharacter) {
+            $errors[] = "Password must contain at least one special character.";
+        }
+
+        if (count($errors) > 0) {
             // Password does not meet the policy
-            echo json_encode(["InvalidPassword" => "Password does not meet the policy requirements"]);
+            echo json_encode(["InvalidPassword" => $errors]);
         } else {
             //New Account Registration
-
             //	Check if Passwords match
             if ($passWord != $confirmPassWord) {
                 echo json_encode(["Password Mismatch" => "Password does not match confirm password"]);
