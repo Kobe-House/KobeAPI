@@ -32,6 +32,7 @@ use Firebase\JWT\Key;
 include('../../../migrations/2023083000000_scraping_bulk_kobe.php');
 $connection = new Connection();
 $mysqli = $connection->getConnection();
+
 //---- Processing Query Result Function --------
 function processProducts($result)
 {
@@ -64,6 +65,9 @@ function processProducts($result)
                 'productSpecailFeatures' => $data['special_features'],
                 'productColor' => $data['color'],
                 'productSize' => $data['size'],
+                'productDateFirstAvailable' => $data['date_first_available'],
+                'productModelYear' => $data['model_year'],
+                'productBatteryRequired' => $data['battery_required'],
                 'imageURL' => stripslashes($data['image_url']),
                 'productDescriptions' => [],
                 'productImages' => [],
@@ -89,7 +93,7 @@ function processProducts($result)
 }
 
 $addon = "";
-$sql = "SELECT p.product_id, p.user_guid, p.source, p.created_at, p.title, p.image_url, p.item_model, p.parcel_dimensions, p.asin, p.manufacturer, p.item_weight, p.size, p.special_features, p.color, p.brand, pd.product_description_id, pd.description_name, pi.product_images_id, pi.product_image_url
+$sql = "SELECT p.product_id, p.user_guid, p.source, p.created_at, p.title, p.image_url, p.item_model, p.parcel_dimensions, p.asin, p.manufacturer, p.item_weight, p.size, p.special_features, p.color, p.brand, pd.product_description_id, pd.description_name, pi.product_images_id, pi.product_image_url, p.date_first_available, p.model_year, p.battery_required
         FROM product p
         LEFT JOIN product_description pd ON p.product_id = pd.product_id
         LEFT JOIN product_images pi ON p.product_id = pi.product_id";

@@ -57,7 +57,6 @@ if ($email != NULL && filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
         // ----- Password policy opatterns ----
         $hasUpperCase = preg_match('/[A-Z]/', $passWord);
-        $hasLowerCase = preg_match('/[a-z]/', $passWord);
         $hasDigit = preg_match('/\d/', $passWord);
         $hasSpecialCharacter =  preg_match('/[@$!%*?&]/', $passWord);
 

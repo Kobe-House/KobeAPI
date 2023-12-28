@@ -28,6 +28,9 @@ $ageRangeFinal = '';
 $colorFinal = '';
 $specialFeaturesFinal = '';
 $itemModelNumberFinal = '';
+$dateFirstAvailableFinal = '';
+$itemModelYearFinal = '';
+$betterRequiredFinal = '';
 
 // Scenario 1: Check if product details are in a list (ul structure)
 $elements = $xpath->query('//div[@id="detailBullets_feature_div"]//li//span[@class="a-list-item"]');
@@ -134,6 +137,8 @@ $attributes = array(
     'Manufacturer reference',
     'Item model number',
     'Model Number',
+    'Model Name',
+    'Model year',
     'Parcel Dimensions',
     'Product Dimensions',
     'ASIN',
@@ -148,6 +153,7 @@ $attributes = array(
     'Size',
     'Brand',
     'Special Features',
+    'Special features',
 );
 
 // Loop through the sections and attributes
@@ -178,14 +184,23 @@ $technicalDetails = isset($dataForProductDescription['Technical Details']) ? $da
 $additionalInformation = isset($dataForProductDescription['Additional Information']) ? $dataForProductDescription['Additional Information'] : array();
 
 // Check and assign values or "N/A"
+$itemModelYearTABLE1 = isset($technicalDetails['Model year']) ? $technicalDetails['Model year'] : (
+    isset($additionalInformation['Model year']) ? $additionalInformation['Model year'] : ''
+);
 $itemModelNumberTABLE1 = isset($technicalDetails['Item model number']) ? $technicalDetails['Item model number'] : (
     isset($additionalInformation['Item model number']) ? $additionalInformation['Item model number'] : ''
 );
 $itemModelNumberTABLE2 = isset($technicalDetails['Model Number']) ? $technicalDetails['Model Number'] : (
     isset($additionalInformation['Model Number']) ? $additionalInformation['Model Number'] : ''
 );
-$specialFeaturesTABLE = isset($technicalDetails['Special Features']) ? $technicalDetails['Special Features'] : (
+$itemModelNumberTABLE3 = isset($technicalDetails['Model Name']) ? $technicalDetails['Model Name'] : (
+    isset($additionalInformation['Model Name']) ? $additionalInformation['Model Name'] : ''
+);
+$specialFeaturesTABLE1 = isset($technicalDetails['Special Features']) ? $technicalDetails['Special Features'] : (
     isset($additionalInformation['Special Features']) ? $additionalInformation['Special Features'] : ''
+);
+$specialFeaturesTABLE2 = isset($technicalDetails['Special features']) ? $technicalDetails['Special features'] : (
+    isset($additionalInformation['Special features']) ? $additionalInformation['Special features'] : ''
 );
 $brandTABLE = isset($technicalDetails['Brand']) ? $technicalDetails['Brand'] : (
     isset($additionalInformation['Brand']) ? $additionalInformation['Brand'] : ''
@@ -219,6 +234,9 @@ $sizeTABLE = isset($technicalDetails['Size']) ? $technicalDetails['Size'] : (
 $colorTABLE = isset($technicalDetails['Colour']) ? $technicalDetails['Colour'] : (
     isset($additionalInformation['Colour']) ? $additionalInformation['Colour'] :  ''
 );
+$betterRequiredTABLE = isset($technicalDetails['Batteries Required']) ? $technicalDetails['Batteries Required'] : (
+    isset($additionalInformation['Batteries Required']) ? $additionalInformation['Batteries Required'] :  ''
+);
 
 // Extracting Brand Name
 $brandNameElement = $xpath->query('//tr[contains(@class, "po-brand")]//span[@class="a-size-base po-break-word"]')->item(0);
@@ -250,6 +268,25 @@ if (!empty($asinTABLE)) {
 //If No ASIN
 if (empty($asinFinal)) {
     $asinFinal = 'N/A';
+}
+//Final Date First Avaible
+if (!empty($dateFirstAvailableTABLE)) {
+    $dateFirstAvailableFinal = $dateFirstAvailableTABLE;
+} elseif (!empty($dateFirstAvailableUL)) {
+    $dateFirstAvailableFinal = $dateFirstAvailableUL;
+}
+
+//If No Date First Available
+if (empty($dateFirstAvailableFinal)) {
+    $dateFirstAvailableFinal = 'N/A';
+}
+//Final Battery Required
+if (!empty($betterRequiredTABLE)) {
+    $betterRequiredFinal = $betterRequiredTABLE;
+}
+//If No Battery Required
+if (empty($betterRequiredFinal)) {
+    $betterRequiredFinal = 'N/A';
 }
 
 //Final Manufacturer
@@ -310,6 +347,8 @@ if (!empty($itemModelNumberTABLE1)) {
     $itemModelNumberFinal = $itemModelNumberTABLE1;
 } elseif (!empty($itemModelNumberTABLE2)) {
     $itemModelNumberFinal = $itemModelNumberTABLE2;
+} elseif (!empty($itemModelNumberTABLE3)) {
+    $itemModelNumberFinal = $itemModelNumberTABLE3;
 } elseif (!empty($itemModelNumberUL1)) {
     $itemModelNumberFinal = $itemModelNumberUL1;
 } elseif (!empty($itemModelNumberUL2)) {
@@ -320,10 +359,21 @@ if (!empty($itemModelNumberTABLE1)) {
 if (empty($itemModelNumberFinal)) {
     $itemModelNumberFinal = 'N/A';
 }
+//Final Item Model Year
+if (!empty($itemModelYearTABLE1)) {
+    $itemModelYearFinal = $itemModelYearTABLE1;
+}
+
+//If No Item Model Year
+if (empty($itemModelYearFinal)) {
+    $itemModelYearFinal = 'N/A';
+}
 
 //Final Item Special Features
-if (!empty($specialFeaturesTABLE)) {
-    $specialFeaturesFinal = $specialFeaturesTABLE;
+if (!empty($specialFeaturesTABLE1)) {
+    $specialFeaturesFinal = $specialFeaturesTABLE1;
+} elseif (!empty($specialFeaturesTABLE2)) {
+    $specialFeaturesFinal = $specialFeaturesTABLE2;
 } elseif (!empty($specialFeaturesUL)) {
     $specialFeaturesFinal = $specialFeaturesUL;
 } elseif (!empty($specialFeatureBelowTitle)) {
@@ -374,8 +424,8 @@ $sizeFinal = $mysqli->real_escape_string($sizeFinal);
 $colorFinal = $mysqli->real_escape_string($colorFinal);
 
 //INSERT INTO THE DTABASE
-$sql = "INSERT INTO `product` (`title`, `image_url`, `url`, `created_at`, `item_model`, `parcel_dimensions`, `asin`, `manufacturer`, `item_weight`, `size`, `special_features`, `color`, `brand`, `source`, `user_guid`) 
-            VALUES ('$productTitle', '$imageURL', '$scrapingURL', now(), '$itemModelNumberFinal', '$itemDimensionFinal', '$asinFinal', '$manufacturerFinal', '$itemWeightFinal', '$sizeFinal', '$specialFeaturesFinal', '$colorFinal', '$brandFinal', '$source', '$guid')";
+$sql = "INSERT INTO `product` (`title`, `image_url`, `url`, `created_at`, `item_model`, `parcel_dimensions`, `asin`, `manufacturer`, `item_weight`, `size`, `special_features`, `color`, `brand`, `source`, `user_guid`, `date_first_available`, `model_year`, `battery_required`) 
+            VALUES ('$productTitle', '$imageURL', '$scrapingURL', now(), '$itemModelNumberFinal', '$itemDimensionFinal', '$asinFinal', '$manufacturerFinal', '$itemWeightFinal', '$sizeFinal', '$specialFeaturesFinal', '$colorFinal', '$brandFinal', '$source', '$guid', '$dateFirstAvailableFinal', '$itemModelYearFinal', '$betterRequiredFinal')";
 $result = $mysqli->query($sql);
 
 $productIdAmazon = $mysqli->insert_id;
