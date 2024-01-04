@@ -73,6 +73,10 @@ foreach ($walmartDescription as $description) {
     $descriptions[] = trim($description);
 }
 
+// ---- Sanitation -----
+$productTitleWalmart = $mysqli->real_escape_string($productTitleWalmart);
+$colorFinal = $mysqli->real_escape_string($colorFinal);
+
 //INSERT QUERY WALMART
 $sql = "INSERT INTO 
              `product` (`title`, `image_url`, `created_at`, `item_model`, `asin`, `color`, `source`, `size`, `url`, `user_guid`) 

@@ -163,6 +163,11 @@ if (empty($dimensioBestBuyFinal)) {
 // Get the main image URL
 $mainImageURL = $xpath->evaluate("string(//div[@data-automation='media-gallery-product-image-slider']//img[@class='productImage_1NbKv']/@src)");
 
+// ----- Sanitize -----
+$productTitleBestBuy = $mysqli->real_escape_string($productTitleBestBuy);
+$dimensioBestBuyFinal = $mysqli->real_escape_string($dimensioBestBuyFinal);
+$heightBestBuyFinal = $mysqli->real_escape_string($heightBestBuyFinal);
+$weightBestBuyFinal = $mysqli->real_escape_string($weightBestBuyFinal);
 //INSERT INTO THE DTABASE BEST BUY
 $sql = "INSERT INTO 
         `product` (`title`, `image_url`, `created_at`, `item_model`, `parcel_dimensions`, `asin`, `item_weight`, `color`, `brand`, `source`, `item_height`, `url`, `user_guid`) 
