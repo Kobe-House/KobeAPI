@@ -116,7 +116,7 @@ if ($specContainer) {
     // $batteryPowerSource = $specifications['Battery Type'];
 }
 
-
+// ----- Weight -----
 $weightBestBuyFinal = "";
 if (!empty($weightBestBuy0)) {
     $weightBestBuyFinal = $weightBestBuy0;
@@ -127,7 +127,11 @@ if (!empty($weightBestBuy0)) {
 } elseif (!empty($weightBestBuy3)) {
     $weightBestBuyFinal = $weightBestBuy3;
 }
+if (empty($weightBestBuyFinal)) {
+    $weightBestBuyFinal = "N/A";
+}
 
+// ---- Height -----
 $heightBestBuyFinal = "";
 if (!empty($heightBestBuy0)) {
     $heightBestBuyFinal = $heightBestBuy0;
@@ -138,6 +142,11 @@ if (!empty($heightBestBuy0)) {
 } elseif (!empty($heightBestBuy3)) {
     $heightBestBuyFinal = $heightBestBuy3;
 }
+if (empty($heightBestBuyFinal)) {
+    $heightBestBuyFinal = "N/A";
+}
+
+// ---- Dimension -----
 $dimensioBestBuyFinal = "";
 if (!empty($dimensioBestBuy0)) {
     $dimensioBestBuyFinal = $dimensioBestBuy0;
@@ -148,7 +157,9 @@ if (!empty($dimensioBestBuy0)) {
 } elseif (!empty($dimensioBestBuy3)) {
     $dimensioBestBuyFinal = $dimensioBestBuy3;
 }
-
+if (empty($dimensioBestBuyFinal)) {
+    $dimensioBestBuyFinal = "N/A";
+}
 // Get the main image URL
 $mainImageURL = $xpath->evaluate("string(//div[@data-automation='media-gallery-product-image-slider']//img[@class='productImage_1NbKv']/@src)");
 

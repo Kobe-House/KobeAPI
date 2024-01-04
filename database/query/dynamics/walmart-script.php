@@ -1,6 +1,7 @@
-<?php 
+<?php
 
-function scrapeWalmart($linkToScrape, $apiKey) {
+function scrapeWalmart($linkToScrape, $apiKey)
+{
     $ch = curl_init();
 
     $options = [
@@ -86,11 +87,16 @@ function scrapeWalmart($linkToScrape, $apiKey) {
         $d = $details->item(1);
         $dHTML = $dom->saveHTML($d);
         $dHTML = str_replace('• ', '', $dHTML);
+        $dHTML = str_replace('<ul>', '', $dHTML);
+        $dHTML = str_replace('</ul>', '', $dHTML);
+        $dHTML = str_replace('<li>', '<br>', $dHTML);
+        $dHTML = str_replace('</li>', '', $dHTML);
+        $dHTML = str_replace('<b>', '', $dHTML);
+        $dHTML = str_replace('</b>', '', $dHTML);
+        $dHTML = str_replace('<p>', '', $dHTML);
+        $dHTML = str_replace('</p>', '', $dHTML);
         $walmartDescription[] = explode('<br>', $dHTML);
     }
 
     return ['scrappedData' => $scrappedData, 'walmartDescription' => $walmartDescription];
 }
-
-
-?>

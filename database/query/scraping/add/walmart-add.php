@@ -1,4 +1,9 @@
 <?php
+// ----- final variable declaration -----
+$sizeFinal = "";
+$colorFinal = "";
+$skuFinal = "";
+$upcFinal = "";
 
 //Extracting Product Title
 $titleElement = $xpath->query('//h1[@id="main-title"]');
@@ -27,6 +32,35 @@ $colour = $walmartProduct['scrappedData']['colour'];
 $sku = $walmartProduct['scrappedData']['sku'];
 $upc = $walmartProduct['scrappedData']['upc'];
 
+//---- Size Final----
+if (!empty($size)) {
+    $sizeFinal = $size;
+}
+if (empty($sizeFinal)) {
+    $sizeFinal = "N/A";
+}
+// ----- Color Final -----
+if (!empty($colour)) {
+    $colorFinal = $colour;
+}
+if (empty($colorFinal)) {
+    $colorFinal = "N/A";
+}
+// ---- Sku final ----
+if (!empty($sku)) {
+    $skuFinal = $sku;
+}
+if (empty($skuFinal)) {
+    $skuFinal = "N/A";
+}
+// ---- UPC final ----
+if (!empty($upc)) {
+    $upcFinal = $upc;
+}
+if (empty($upcFinal)) {
+    $upcFinal = "N/A";
+}
+
 $walmartDescription = $walmartProduct['walmartDescription'][0];
 
 //Cleaning the description
@@ -42,7 +76,7 @@ foreach ($walmartDescription as $description) {
 //INSERT QUERY WALMART
 $sql = "INSERT INTO 
              `product` (`title`, `image_url`, `created_at`, `item_model`, `asin`, `color`, `source`, `size`, `url`, `user_guid`) 
-             VALUES ('$productTitleWalmart', '$imageURLWalmart', now(), '$upc', '$sku', '$colour', '$source', '$size', '$scrapingURL', '$guid')";
+             VALUES ('$productTitleWalmart', '$imageURLWalmart', now(), '$upcFinal', '$skuFinal', '$colorFinal', '$source', '$sizeFinal', '$scrapingURL', '$guid')";
 
 $result = $mysqli->query($sql);
 $productIdWalmart = $mysqli->insert_id;

@@ -112,7 +112,6 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
                 $sql .= " ORDER BY 
                             p.created_at DESC,
                             p.product_id DESC,
-                            pd.product_description_id DESC,
                             pi.product_images_id DESC";
                 $result = $mysqli->query($sql);
                 if (!$result) {
@@ -127,7 +126,6 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
                 $sql .= " ORDER BY 
                             p.created_at DESC,
                             p.product_id DESC,
-                            pd.product_description_id DESC,
                             pi.product_images_id DESC";
                 $result = $mysqli->query($sql);
 
